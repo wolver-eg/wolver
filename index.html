@@ -189,6 +189,7 @@
      native appearance and drawing our own small arrow keeps every form-grid field the same height. */
   .form-grid select{box-sizing:border-box;height:38px;line-height:36px;padding:0 28px 0 10px;appearance:none;-webkit-appearance:none;-moz-appearance:none;background-repeat:no-repeat;background-position:10px center;background-size:10px 6px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234B4F58' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");}
   html[data-theme="dark"] .form-grid select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A3A9B4' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");}
+  html[dir="ltr"] .form-grid select{background-position:right 10px center;}
   .form-grid input:focus,.form-grid select:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(var(--brand-rgb),.12);}
   .form-panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:10px;display:none;}
   .form-panel.active{display:block;}
