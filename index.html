@@ -1938,6 +1938,7 @@ const I18N = {
     actPrint: `طباعة`,
     errChooseDiffWarehouses: `اختر مخزنين مختلفين`,
     errCompleteRowData: `استكمل بيانات الصف`,
+    errQtyExceedsAvail: `الكمية المطلوبة أكبر من المتاح`,
     errUsernameExists: `اسم المستخدم موجود مسبقًا`,
     errEnterItemName: `اكتب اسم الصنف`,
     errTableEmpty: `الجدول فاضي`,
@@ -2461,6 +2462,7 @@ This will replace all current data with this older backup, and this restore itse
     actPrint: `Print`,
     errChooseDiffWarehouses: `Choose two different warehouses`,
     errCompleteRowData: `Complete the row's data`,
+    errQtyExceedsAvail: `Requested quantity exceeds what is available`,
     errUsernameExists: `Username already exists`,
     errEnterItemName: `Enter the item name`,
     errTableEmpty: `The table is empty`,
@@ -5881,6 +5883,43 @@ function closeBulkOut(){
   document.getElementById('bulkOutOverlay').classList.remove('active');
   closeAllItemCombos();
 }
+// Quantity (base units) that can actually be issued/moved for an item in a warehouse.
+// creditAllocs = allocations of a saved note that is about to be re-applied (continuation), so its own quantity counts as available again.
+function availableBaseQty(item, wh, skipExpired, creditAllocs){
+  let total = item.batches.reduce((s,b)=> (skipExpired && isBatchExpired(b)) ? s : s+((b.balances&&b.balances[wh])||0), 0);
+  (creditAllocs||[]).forEach(a=>{
+    if(a.itemId!==item.id || a.wh!==wh) return;
+    const b = item.batches.find(x=>x.id===a.batchId);
+    if(!b || (skipExpired && isBatchExpired(b))) return;
+    total -= a.delta;
+  });
+  return Math.round(total*100)/100;
+}
+function noteCreditAllocs(prefix){
+  const s = liveNoteSession[prefix];
+  return (s && !s.pending && s.appliedAllocations) ? s.appliedAllocations : [];
+}
+// Returns the first item/warehouse whose total requested quantity (summed over all rows) is more than available, or null.
+function findQtyOverflow(rows, whKey, skipExpired, creditAllocs, onlyRow){
+  const need = {};
+  for(const r of rows){
+    const item = STATE.items.find(i=>i.id===r.itemId);
+    if(!item) continue;
+    const key = r.itemId+'|'+r[whKey];
+    need[key] = Math.round(((need[key]||0) + (r.qty||0))*100)/100;
+  }
+  for(const r of rows){
+    if(onlyRow && !(r.itemId===onlyRow.itemId && r[whKey]===onlyRow[whKey])) continue;
+    const item = STATE.items.find(i=>i.id===r.itemId);
+    if(!item) continue;
+    const avail = availableBaseQty(item, r[whKey], skipExpired, creditAllocs);
+    if(need[r.itemId+'|'+r[whKey]] > avail + 0.0001) return {item, wh:r[whKey], avail};
+  }
+  return null;
+}
+function qtyOverflowMsg(o){
+  return t('errQtyExceedsAvail')+' ('+o.item.name+' — '+whName(o.wh)+') — '+t('availableQtyLabel')+': '+totalQtyDisplay(o.item, o.avail);
+}
 function formatFefoExpiryLabel(alloc){
   if(!alloc.length) return t('noBalanceShort');
   return alloc.map(a=>a.batch.expiry||t('statusUnspecified')).join(' + ');
@@ -5900,6 +5939,9 @@ function addBulkOutRow(){
     showToast(hasExpiredOnly ? (t('errOnlyExpiredInWhPrefix')+whName(wh)+t('errOnlyExpiredInWhSuffix')) : (t('errNoBalanceForItemInWhPrefix')+whName(wh)));
     return;
   }
+  const candOut = {itemId, wh, qty};
+  const ovOut = findQtyOverflow([...bulkOutRows, candOut], 'wh', true, noteCreditAllocs('bo'), candOut);
+  if(ovOut){ showToast(qtyOverflowMsg(ovOut)); return; }
   const expiry = formatFefoExpiryLabel(alloc);
   bulkOutRows.push({itemId, itemName:item.name, qty, enteredQty, unitChoice, extraQty, wh, whLabel:whName(wh), expiry});
   document.getElementById('boQty').value=''; document.getElementById('boQtyExtra').value='';
@@ -5921,6 +5963,7 @@ function renderBulkOutTable(){
 function updateBulkOutRow(i, field, value){
   const row = bulkOutRows[i];
   if(!row) return;
+  const oldRow = {...row};
   delete row.split;
   const item = STATE.items.find(x=>x.id===row.itemId);
   if(field==='qty'){ row.enteredQty = parseFloat(value)||0; row.qty = rowBaseQty(item, row); }
@@ -5928,6 +5971,8 @@ function updateBulkOutRow(i, field, value){
   else if(field==='extraQty'){ row.extraQty = parseFloat(value)||0; row.qty = rowBaseQty(item, row); }
   else if(field==='wh'){ row.wh = value; row.whLabel = whName(value); }
   if(item){
+    const ovUp = findQtyOverflow(bulkOutRows, 'wh', true, noteCreditAllocs('bo'), row);
+    if(ovUp){ Object.assign(row, oldRow); showToast(qtyOverflowMsg(ovUp)); renderBulkOutTable(); return; }
     const {alloc} = computeFefoAllocation(item, row.wh, row.qty, true);
     row.expiry = formatFefoExpiryLabel(alloc);
     if(field==='wh' && !alloc.length){
@@ -5958,6 +6003,8 @@ async function commitBulkOut(){
   const recipient = document.getElementById('boRecipientName').value.trim();
   const isApproving = !!(editingNoteMeta && editingNoteMeta.approving);
   const continuing = !editingNoteMeta && !!liveNoteSession.bo;
+  const ovCommitOut = findQtyOverflow(bulkOutRows, 'wh', true, continuing ? noteCreditAllocs('bo') : []);
+  if(ovCommitOut){ showToast(qtyOverflowMsg(ovCommitOut)); return; }
   const serial = editingNoteMeta ? editingNoteMeta.serial : (continuing ? liveNoteSession.bo.serial : STATE.nextNoteSerial.out++);
   const noteId = editingNoteMeta ? editingNoteMeta.id : (continuing ? liveNoteSession.bo.id : ('note-'+Date.now()));
   const createdAt = editingNoteMeta ? editingNoteMeta.createdAt : (continuing ? liveNoteSession.bo.createdAt : new Date().toISOString());
@@ -6782,6 +6829,9 @@ function addTransferRow(){
   const qty = toBaseQty(item, enteredQty, unitChoice) + extraQty;
   const {alloc} = computeFefoAllocation(item, from, qty);
   if(!alloc.length){ showToast(t('errNoBalanceForItemInWhPrefix')+whName(from)); return; }
+  const candTr = {itemId:item.id, fromWh:from, qty};
+  const ovTr = findQtyOverflow([...transferRows, candTr], 'fromWh', false, noteCreditAllocs('tr'), candTr);
+  if(ovTr){ showToast(qtyOverflowMsg(ovTr)); return; }
   const expiry = formatFefoExpiryLabel(alloc);
   transferRows.push({itemId:item.id, itemName:item.name, fromWh:from, fromLabel:whName(from), toWh:to, toLabel:whName(to), qty, enteredQty, unitChoice, extraQty, expiry});
   document.getElementById('trQty').value=''; document.getElementById('trQtyExtra').value='';
@@ -6792,11 +6842,14 @@ function removeTransferRow(i){ transferRows.splice(i,1); renderTransferTable(); 
 function updateTransferRow(i, field, value){
   const row = transferRows[i];
   if(!row) return;
+  const oldRow = {...row};
   const item = STATE.items.find(x=>x.id===row.itemId);
   if(field==='qty'){ row.enteredQty = parseFloat(value)||0; row.qty = rowBaseQty(item, row); }
   else if(field==='unit'){ row.unitChoice = value; if(value!=='u1') row.extraQty = 0; row.qty = rowBaseQty(item, row); }
   else if(field==='extraQty'){ row.extraQty = parseFloat(value)||0; row.qty = rowBaseQty(item, row); }
   if(item){
+    const ovTrUp = findQtyOverflow(transferRows, 'fromWh', false, noteCreditAllocs('tr'), row);
+    if(ovTrUp){ Object.assign(row, oldRow); showToast(qtyOverflowMsg(ovTrUp)); renderTransferTable(); return; }
     const {alloc} = computeFefoAllocation(item, row.fromWh, row.qty);
     row.expiry = formatFefoExpiryLabel(alloc);
   }
@@ -6840,6 +6893,8 @@ async function commitTransfer(){
   const recipient = document.getElementById('trRecipientName').value.trim();
   const isApproving = !!(editingNoteMeta && editingNoteMeta.approving);
   const continuing = !editingNoteMeta && !!liveNoteSession.tr;
+  const ovCommitTr = findQtyOverflow(transferRows, 'fromWh', false, continuing ? noteCreditAllocs('tr') : []);
+  if(ovCommitTr){ showToast(qtyOverflowMsg(ovCommitTr)); return; }
   const serial = editingNoteMeta ? editingNoteMeta.serial : (continuing ? liveNoteSession.tr.serial : STATE.nextNoteSerial.transfer++);
   const noteId = editingNoteMeta ? editingNoteMeta.id : (continuing ? liveNoteSession.tr.id : ('note-'+Date.now()));
   const createdAt = editingNoteMeta ? editingNoteMeta.createdAt : (continuing ? liveNoteSession.tr.createdAt : new Date().toISOString());
