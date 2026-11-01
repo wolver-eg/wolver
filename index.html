@@ -904,16 +904,6 @@
     <h2 style="display:flex;align-items:center;gap:7px;"><svg class="btn-ico" style="width:18px;height:18px;margin:0;flex:none;color:var(--brand);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a4 4 0 0 0-3-3.85V11a5 5 0 0 0-9.9-1.09A4.5 4.5 0 0 0 7.5 18H19a4 4 0 0 0 2-3Z"/><polyline points="12 12 12 20"/><polyline points="9 17 12 20 15 17"/></svg><span data-i18n="backupSettingsBtn">النسخ الاحتياطي</span></h2>
     <div class="item-meta" data-i18n="backupIntroDesc">اختار مجلدًا على جهازك، والتطبيق هيحفظ فيه نسخة احتياطية من قاعدة البيانات تلقائيًا أول ما تفتح التطبيق كل يوم، وتقدر كمان تاخد نسخة فورًا دلوقتي في أي وقت.</div>
 
-    <div class="warn-box" id="backupFsUnsupportedNote" style="display:none;" data-i18n="backupFsUnsupportedNote">المتصفح ده مش بيدعم اختيار مجلد للحفظ التلقائي. تقدر برضه تعمل نسخة احتياطية وهتتحمّل كملف عادي في مجلد التحميلات، وترجع تستخدمها بعدين في الاستعادة من "اختيار ملف من جهازك" تحت.</div>
-
-    <div class="section-head" style="margin-top:14px;"><h2 style="font-size:14px;" data-i18n="backupFolderHeading">مجلد الحفظ التلقائي</h2></div>
-    <div class="item-meta" id="backupFolderStatus" data-i18n="backupFolderNotSet">لسه ماتم اختيار مجلد</div>
-    <div class="warn-box" id="backupFolderPermWarn" style="display:none;" data-i18n="backupPermLostDesc">التطبيق مالوش إذن وصول للمجلد دلوقتي (ممكن يحصل بعد إعادة فتح المتصفح). أكّد الإذن تاني عشان يرجع الحفظ التلقائي يعمل.</div>
-    <div class="form-actions">
-      <button class="btn btn-ghost btn-sm" id="backupPickFolderBtn" onclick="pickBackupFolder()" type="button" data-i18n="backupPickFolderBtn">اختيار مجلد الحفظ</button>
-      <button class="btn btn-ghost btn-sm" id="backupReconfirmBtn" onclick="reconfirmBackupAccess()" type="button" data-i18n="backupReconfirmBtn">تأكيد الوصول للمجلد</button>
-    </div>
-
     <div class="section-head" style="margin-top:16px;"><h2 style="font-size:14px;" data-i18n="driveHeading">جوجل درايف</h2></div>
     <div class="item-meta" data-i18n="driveDesc">اربط حساب جوجل بتاعك مرة على كل جهاز، والنسخ الاحتياطية (التلقائية واليدوية) هتتحفظ في مجلد "WOLVER Backups" على الدرايف بتاعك.</div>
     <div class="item-meta" id="driveStatus" data-i18n="driveNotLinked">مش مربوط</div>
@@ -926,8 +916,6 @@
     <div class="item-meta"><span data-i18n="backupLastAutoPrefix">آخر نسخة احتياطية: </span><span id="backupLastAutoLabel" data-i18n="backupNeverYet">لسه محصلتش</span></div>
     <div class="form-actions"><button class="btn btn-amber" onclick="backupNow()" type="button" data-i18n="backupNowBtn">احفظ نسخة احتياطية الآن</button></div>
 
-    <div class="section-head" style="margin-top:16px;"><h2 style="font-size:14px;" data-i18n="backupRecentHeading">آخر النسخ المحفوظة في المجلد</h2></div>
-    <div id="backupRecentList"></div>
     <div class="section-head" style="margin-top:16px;"><h2 style="font-size:14px;" data-i18n="driveRecentHeading">آخر النسخ على جوجل درايف</h2></div>
     <div id="driveRecentList"></div>
 
@@ -1833,7 +1821,7 @@ const I18N = {
     keepNotes: `الاحتفاظ بالأذونات المحفوظة (إضافة / صرف / تحويل)`,
     keepContacts: `الاحتفاظ بالأشخاص (الموردين والعملاء)`,
     backupSettingsBtn: `النسخ الاحتياطي`,
-    backupIntroDesc: `اختار مجلدًا على جهازك، والتطبيق هيحفظ فيه نسخة احتياطية من قاعدة البيانات تلقائيًا أول ما تفتح التطبيق كل يوم، وتقدر كمان تاخد نسخة فورًا دلوقتي في أي وقت.`,
+    backupIntroDesc: `النسخ الاحتياطي للمدير المؤسس بس. بتتحفظ النسخ على جوجل درايف بتاعك، والنسخة التلقائية بتتعمل مع كل مرة بتدخل فيها التطبيق، وتقدر كمان تعمل نسخة يدوية في أي وقت.`,
     backupFsUnsupportedNote: `المتصفح ده مش بيدعم اختيار مجلد للحفظ التلقائي. تقدر برضه تعمل نسخة احتياطية وهتتحمّل كملف عادي في مجلد التحميلات، وترجع تستخدمها بعدين في الاستعادة من "اختيار ملف من جهازك" تحت.`,
     backupFolderHeading: `مجلد الحفظ التلقائي`,
     backupFolderNotSet: `لسه ماتم اختيار مجلد`,
@@ -1851,7 +1839,7 @@ const I18N = {
     backupFolderListUnavailable: `مش متاح عرض النسخ دلوقتي (اختار مجلد أو أكّد الإذن أولًا) — تقدر برضه تسترجع من ملف عن طريق "اختيار ملف من جهازك" تحت.`,
     backupListFailed: `حصل خطأ في قراءة محتوى المجلد.`,
     backupRestoreFileHeading: `استرجاع من ملف على جهازك`,
-    backupRestoreFileDesc: `تقدر ترجع أي نسخة احتياطية (.json) محفوظة في أي مكان على جهازك أو فلاشة، حتى لو مش في المجلد المختار.`,
+    backupRestoreFileDesc: `تقدر ترجع أي نسخة احتياطية (.json) محفوظة على جهازك، مثلًا نزّلتها من مجلد جوجل درايف. الاسترجاع للمدير المؤسس بس.`,
     backupChooseFileBtn: `اختيار ملف من جهازك`,
     restoreBtn: `استرجاع`,
     restorePasswordDesc: `اكتب كلمة مرور حساب الأدمن الحالي لإتمام عملية استرجاع النسخة الاحتياطية.`,
@@ -1868,7 +1856,7 @@ const I18N = {
     errRestoreRetry: `فشل حفظ البيانات المسترجَعة — تحقق من اتصالك بالإنترنت وحاول تاني.`,
     msgBackupSaved: `تم حفظ نسخة احتياطية في المجلد المختار`,
     driveHeading: `جوجل درايف`,
-    driveDesc: `اربط حساب جوجل بتاعك مرة على كل جهاز، والنسخ الاحتياطية (التلقائية واليدوية) هتتحفظ في مجلد "WOLVER Backups" على الدرايف بتاعك.`,
+    driveDesc: `اربط حساب جوجل بتاعك مرة على كل متصفح بتستخدمه، والنسخ الاحتياطية (التلقائية واليدوية) هتتحفظ في مجلد "WOLVER Backups" على الدرايف بتاعك.`,
     driveNotLinked: `مش مربوط`,
     driveLinkedPrefix: `مربوط ✔ — `,
     driveNeedsReconnect: `الربط محتاج تأكيد تاني على الجهاز ده — دوس "ربط جوجل درايف".`,
@@ -2365,7 +2353,7 @@ const I18N = {
     keepNotes: `Keep saved vouchers (in / out / transfer)`,
     keepContacts: `Keep people (suppliers and customers)`,
     backupSettingsBtn: `Backup & Restore`,
-    backupIntroDesc: `Pick a folder on your device, and the app will save a backup of the database there automatically the first time you open it each day. You can also take a backup right now at any time.`,
+    backupIntroDesc: `Backups are for the founding admin only. They are saved to your Google Drive; the automatic backup runs every time you enter the app, and you can also take one manually at any time.`,
     backupFsUnsupportedNote: `This browser doesn't support picking a folder for automatic saving. You can still take a backup — it will download as a regular file to your Downloads folder, and you can restore from it later using "Choose a file from your device" below.`,
     backupFolderHeading: `Automatic backup folder`,
     backupFolderNotSet: `No folder chosen yet`,
@@ -2383,7 +2371,7 @@ const I18N = {
     backupFolderListUnavailable: `The backup list isn't available right now (choose a folder or re-confirm access first) — you can still restore from a file using "Choose a file from your device" below.`,
     backupListFailed: `There was an error reading the folder's contents.`,
     backupRestoreFileHeading: `Restore from a file on your device`,
-    backupRestoreFileDesc: `You can restore any backup (.json) saved anywhere on your device or a USB drive, even if it's not in the chosen folder.`,
+    backupRestoreFileDesc: `You can restore any backup (.json) saved on your device, for example one downloaded from the Google Drive folder. Restore is for the founding admin only.`,
     backupChooseFileBtn: `Choose a file from your device`,
     restoreBtn: `Restore`,
     restorePasswordDesc: `Enter the current admin account's password to complete the backup restore.`,
@@ -2400,7 +2388,7 @@ This will replace all current data with this older backup, and this restore itse
     errRestoreRetry: `Failed to save the restored data — check your internet connection and try again.`,
     msgBackupSaved: `A backup was saved to the chosen folder`,
     driveHeading: `Google Drive`,
-    driveDesc: `Link your Google account once on each device, and backups (automatic and manual) will be saved to a "WOLVER Backups" folder in your own Drive.`,
+    driveDesc: `Link your Google account once on each browser you use, and backups (automatic and manual) will be saved to a "WOLVER Backups" folder in your own Drive.`,
     driveNotLinked: `Not linked`,
     driveLinkedPrefix: `Linked ✔ — `,
     driveNeedsReconnect: `The link needs to be confirmed again on this device — tap "Link Google Drive".`,
@@ -3754,7 +3742,7 @@ function enterApp(skipRecoveryCheck){
   document.getElementById('usersSettingsBtn').style.display = currentUser.role==='admin' ? 'inline-block' : 'none';
   document.getElementById('brandingSettingsBtn').style.display = currentUser.role==='admin' ? 'inline-block' : 'none';
   document.getElementById('logNavBtn').style.display = currentUser.role==='admin' ? 'inline-block' : 'none';
-  document.getElementById('backupSettingsBtn').style.display = currentUser.role==='admin' ? 'inline-block' : 'none';
+  document.getElementById('backupSettingsBtn').style.display = isFounder() ? 'inline-block' : 'none';
   applyPermissions();
   syncItemSortMenu();
   syncItemViewMenu();
@@ -4105,59 +4093,21 @@ async function performWipeData(opts){
   if(document.getElementById('contactsOverlay').classList.contains('active')) renderContactsList();
 }
 
-/* ============ BACKUP & RESTORE (device-local, WOLVER only) ============ */
-// Design: the user picks a folder on their own device via the File System Access API.
-// The app keeps that folder's handle in IndexedDB (it survives reloads; FileSystemDirectoryHandle
-// is structured-clonable but can't live in localStorage). Once a folder is chosen, a backup is
-// written there automatically the first time the app is opened each day (silent — never prompts,
-// since there's no user gesture to justify a permission popup), and the admin can also trigger one
-// instantly at any time. The newest 10 backups are kept in the folder; older ones are pruned.
-// On a browser without the File System Access API (Firefox/Safari today), "backup now" simply
-// downloads the file as a normal download, and restoring works from any such file.
+/* ============ BACKUP & RESTORE (founding admin only, Google Drive) ============ */
+// Design: only the founding admin (the first admin) takes backups. They link their own Google Drive once;
+// every backup — automatic or manual — is saved as a file in a "WOLVER Backups" folder of that Drive.
+// The automatic backup runs every time the founding admin enters the app (silently — if Google needs a
+// click to reconnect it is simply skipped and the backup screen says so). The newest
+// BACKUP_RETENTION_COUNT backups are kept in the folder; older ones are removed.
+// Restore (also founding admin only) works from a backup file — e.g. downloaded from the Drive folder,
+// or picked from the recent Drive backups listed on the backup screen.
 // Restore is deliberately limited to business data (items, warehouses, saved notes, contacts,
 // branding and the transaction log) — it never touches user accounts or passwords, so an admin can
 // never lock themselves out of their own app by restoring an old backup.
-const BACKUP_FS_SUPPORTED = typeof window.showDirectoryPicker === 'function';
-const BACKUP_RETENTION_COUNT = 10;
+const BACKUP_RETENTION_COUNT = 30;
 const BACKUP_LAST_KEY = 'wolverLastBackupDate';
-const BACKUP_FILE_RE = /^wolver-backup-.*\.json$/i;
-const BACKUP_IDB_NAME = 'wolverBackupStore';
-const BACKUP_IDB_STORE = 'handles';
-let backupDirHandle = null;
-let backupFolderName = null;
 let pendingRestorePayload = null;
 let pendingRestoreLabel = '';
-
-function backupIdbOpen(){
-  return new Promise((resolve, reject)=>{
-    const req = indexedDB.open(BACKUP_IDB_NAME, 1);
-    req.onupgradeneeded = ()=>{ req.result.createObjectStore(BACKUP_IDB_STORE); };
-    req.onsuccess = ()=>resolve(req.result);
-    req.onerror = ()=>reject(req.error);
-  });
-}
-async function backupIdbSet(key, val){
-  try{
-    const db = await backupIdbOpen();
-    return await new Promise((resolve, reject)=>{
-      const tx = db.transaction(BACKUP_IDB_STORE, 'readwrite');
-      tx.objectStore(BACKUP_IDB_STORE).put(val, key);
-      tx.oncomplete = ()=>resolve(true);
-      tx.onerror = ()=>reject(tx.error);
-    });
-  }catch(e){ console.error('backupIdbSet failed', e); return false; }
-}
-async function backupIdbGet(key){
-  try{
-    const db = await backupIdbOpen();
-    return await new Promise((resolve, reject)=>{
-      const tx = db.transaction(BACKUP_IDB_STORE, 'readonly');
-      const req = tx.objectStore(BACKUP_IDB_STORE).get(key);
-      req.onsuccess = ()=>resolve(req.result || null);
-      req.onerror = ()=>reject(req.error);
-    });
-  }catch(e){ console.error('backupIdbGet failed', e); return null; }
-}
 
 function todayStr(){
   const d = new Date();
@@ -4180,49 +4130,6 @@ function buildBackupPayload(){
     contacts: STATE.contacts, transactions: STATE.transactions, branding: STATE.branding,
     users: STATE.users
   };
-}
-async function ensureBackupPermission(handle, requestIfNeeded){
-  if(!handle) return false;
-  try{
-    const opts = {mode:'readwrite'};
-    let perm = await handle.queryPermission(opts);
-    if(perm==='granted') return true;
-    if(perm==='prompt' && requestIfNeeded){
-      perm = await handle.requestPermission(opts);
-      return perm==='granted';
-    }
-    return false;
-  }catch(e){ return false; }
-}
-async function listRecentBackups(handle){
-  const names = [];
-  for await (const [name, entry] of handle.entries()){
-    if(entry.kind==='file' && BACKUP_FILE_RE.test(name)) names.push(name);
-  }
-  names.sort().reverse();
-  return names.slice(0, BACKUP_RETENTION_COUNT);
-}
-async function pruneOldBackups(handle){
-  const names = [];
-  for await (const [name, entry] of handle.entries()){
-    if(entry.kind==='file' && BACKUP_FILE_RE.test(name)) names.push(name);
-  }
-  names.sort();
-  const excess = names.length - BACKUP_RETENTION_COUNT;
-  if(excess>0){
-    for(const name of names.slice(0, excess)){
-      try{ await handle.removeEntry(name); }catch(e){}
-    }
-  }
-}
-async function writeBackupToFolder(handle, payload){
-  const name = backupFileNameNow();
-  const fileHandle = await handle.getFileHandle(name, {create:true});
-  const writable = await fileHandle.createWritable();
-  await writable.write(JSON.stringify(payload, null, 2));
-  await writable.close();
-  await pruneOldBackups(handle);
-  return name;
 }
 function downloadBackupBlob(payload, filename){
   const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
@@ -4334,7 +4241,7 @@ async function driveUploadBackup(token, payload){
   return name;
 }
 async function driveLink(){
-  if(!currentUser || currentUser.role!=='admin') return;
+  if(!isFounder()) return;
   try{
     const token = await driveGetToken(true);
     await driveEnsureFolder(token);
@@ -4347,7 +4254,7 @@ async function driveLink(){
   await refreshBackupModalUI();
 }
 async function driveUnlink(){
-  if(!currentUser || currentUser.role!=='admin') return;
+  if(!isFounder()) return;
   try{
     if(driveToken && window.google && google.accounts && google.accounts.oauth2) google.accounts.oauth2.revoke(driveToken, ()=>{});
   }catch(e){}
@@ -4357,7 +4264,7 @@ async function driveUnlink(){
   await refreshBackupModalUI();
 }
 async function requestRestoreFromDrive(fileId, name){
-  if(!currentUser || currentUser.role!=='admin') return;
+  if(!isFounder()) return;
   try{
     const token = await driveGetToken(true);
     const payload = await (await driveApi('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(fileId)+'?alt=media', token)).json();
@@ -4365,123 +4272,52 @@ async function requestRestoreFromDrive(fileId, name){
   }catch(e){ console.error(e); showToast(t('errBackupReadFailed')); }
 }
 
+function isFounder(){ return !!(currentUser && currentUser.isFounder); }
 async function initBackupFeature(){
-  if(BACKUP_FS_SUPPORTED){
-    try{
-      const handle = await backupIdbGet('dir');
-      if(handle){ backupDirHandle = handle; backupFolderName = handle.name; }
-    }catch(e){ console.error(e); }
-  }
+  if(!isFounder()) return;
   if(driveIsLinked()) driveLoadGis().catch(()=>{});
-  await autoDailyBackupCheck();
+  await autoBackupOnEntry();
 }
 let _autoBackupBusy = false;
-async function autoDailyBackupCheck(){
+// Runs every time the founding admin enters the app (not just once a day).
+async function autoBackupOnEntry(){
   if(_autoBackupBusy) return;
-  if(!currentUser || currentUser.role!=='admin') return;
-  const useDrive = driveIsLinked();
-  const useFolder = BACKUP_FS_SUPPORTED && !!backupDirHandle;
-  if(!useDrive && !useFolder) return;
-  if(localStorage.getItem(BACKUP_LAST_KEY)===todayStr()) return;
+  if(!isFounder() || !driveIsLinked()) return;
   _autoBackupBusy = true;
   try{
-    const payload = buildBackupPayload();
-    let saved = false;
-    if(useFolder){
-      const ok = await ensureBackupPermission(backupDirHandle, false); // no user gesture here — never prompt
-      if(ok){
-        try{ await writeBackupToFolder(backupDirHandle, payload); saved = true; }
-        catch(e){ console.error('auto backup failed', e); }
-      } // otherwise skip quietly; admin can re-confirm access from the backup screen
-    }
-    if(useDrive){
-      try{
-        const token = await driveGetToken(false);
-        await driveUploadBackup(token, payload);
-        saved = true;
-      }catch(e){ console.error('auto drive backup skipped', e); } // needs a click to reconnect — shown in the backup screen
-    }
-    if(saved) localStorage.setItem(BACKUP_LAST_KEY, todayStr());
-  } finally { _autoBackupBusy = false; }
-}
-async function pickBackupFolder(){
-  if(!currentUser || currentUser.role!=='admin') return;
-  if(!BACKUP_FS_SUPPORTED){ showToast(t('errBackupFsNotSupported')); return; }
-  try{
-    const handle = await window.showDirectoryPicker({id:'wolver-backup', mode:'readwrite'});
-    const granted = await ensureBackupPermission(handle, true);
-    if(!granted){ showToast(t('errBackupPermissionDenied')); return; }
-    backupDirHandle = handle;
-    backupFolderName = handle.name;
-    await backupIdbSet('dir', handle);
-    showToast(t('msgBackupFolderSet'));
-    await refreshBackupModalUI();
-  }catch(e){
-    if(e && e.name==='AbortError') return;
-    console.error(e);
-    showToast(t('errBackupFolderFailed'));
-  }
-}
-async function reconfirmBackupAccess(){
-  if(!backupDirHandle) return;
-  const ok = await ensureBackupPermission(backupDirHandle, true);
-  showToast(ok ? t('msgBackupAccessRestored') : t('errBackupPermissionDenied'));
-  await refreshBackupModalUI();
+    const token = await driveGetToken(false); // silent — never prompts; skipped if Google needs a click
+    await driveUploadBackup(token, buildBackupPayload());
+    localStorage.setItem(BACKUP_LAST_KEY, new Date().toISOString());
+  }catch(e){ console.error('auto drive backup skipped', e); } // needs a click to reconnect — shown in the backup screen
+  finally { _autoBackupBusy = false; }
 }
 async function backupNow(){
-  if(!currentUser || currentUser.role!=='admin') return;
+  if(!isFounder()) return;
   const payload = buildBackupPayload();
-  let driveOk = false, folderName = null, driveFailed = false;
   if(driveIsLinked()){
     try{
       const token = await driveGetToken(true); // this is a click — Google's popup is allowed
       await driveUploadBackup(token, payload);
-      driveOk = true;
-    }catch(e){ console.error(e); driveFailed = true; }
+      localStorage.setItem(BACKUP_LAST_KEY, new Date().toISOString());
+      showToast(t('msgBackupDriveSaved'));
+      await refreshBackupModalUI();
+      return;
+    }catch(e){ console.error(e); showToast(t('errDriveSaveFailed')); }
   }
-  if(BACKUP_FS_SUPPORTED && backupDirHandle){
-    const ok = await ensureBackupPermission(backupDirHandle, true);
-    if(ok){
-      try{ folderName = await writeBackupToFolder(backupDirHandle, payload); }
-      catch(e){ console.error(e); }
-    }
-  }
-  if(driveOk || folderName){
-    localStorage.setItem(BACKUP_LAST_KEY, todayStr());
-    if(driveOk) showToast(t('msgBackupDriveSaved')+(folderName ? ' + '+t('msgBackupSaved') : ''));
-    else showToast(t('msgBackupSaved')+' ('+folderName+')');
-    if(driveFailed) showToast(t('errDriveSaveFailed'));
-    await refreshBackupModalUI();
-    return;
-  }
-  if(driveFailed) showToast(t('errDriveSaveFailed'));
+  // Drive not linked (or failed): fall back to a normal file download so a copy is never lost.
   downloadBackupBlob(payload, backupFileNameNow());
-  localStorage.setItem(BACKUP_LAST_KEY, todayStr());
+  localStorage.setItem(BACKUP_LAST_KEY, new Date().toISOString());
   showToast(t('msgBackupDownloaded'));
   await refreshBackupModalUI();
 }
 async function openBackupModal(){
-  if(!currentUser || currentUser.role!=='admin') return;
+  if(!isFounder()) return;
   document.getElementById('backupOverlay').classList.add('active');
   driveLoadGis().catch(()=>{}); // preload so the later click can open Google's popup without an async gap
   await refreshBackupModalUI();
 }
 function closeBackupModal(){ document.getElementById('backupOverlay').classList.remove('active'); }
 async function refreshBackupModalUI(){
-  document.getElementById('backupFsUnsupportedNote').style.display = BACKUP_FS_SUPPORTED ? 'none' : 'block';
-  const pickBtn = document.getElementById('backupPickFolderBtn');
-  if(pickBtn){
-    pickBtn.textContent = backupDirHandle ? t('backupChangeFolderBtn') : t('backupPickFolderBtn');
-    pickBtn.style.display = BACKUP_FS_SUPPORTED ? 'inline-block' : 'none';
-  }
-  const statusEl = document.getElementById('backupFolderStatus');
-  if(statusEl) statusEl.textContent = backupDirHandle ? (t('backupFolderSetPrefix')+backupFolderName) : t('backupFolderNotSet');
-  let permOk = true;
-  if(backupDirHandle) permOk = await ensureBackupPermission(backupDirHandle, false);
-  const warnEl = document.getElementById('backupFolderPermWarn');
-  if(warnEl) warnEl.style.display = (backupDirHandle && !permOk) ? 'block' : 'none';
-  const reconfirmBtn = document.getElementById('backupReconfirmBtn');
-  if(reconfirmBtn) reconfirmBtn.style.display = (backupDirHandle && !permOk) ? 'inline-block' : 'none';
   const dLinked = driveIsLinked();
   const dStatus = document.getElementById('driveStatus');
   if(dStatus){
@@ -4509,34 +4345,12 @@ async function refreshBackupModalUI(){
   const lastEl = document.getElementById('backupLastAutoLabel');
   if(lastEl){
     const last = localStorage.getItem(BACKUP_LAST_KEY);
-    lastEl.textContent = last || t('backupNeverYet');
+    const dt = last ? new Date(last) : null;
+    lastEl.textContent = last ? ((dt && !isNaN(dt) && last.length>10) ? dt.toLocaleString(appLocale(),{dateStyle:'medium',timeStyle:'short'}) : last) : t('backupNeverYet');
   }
-  const listEl = document.getElementById('backupRecentList');
-  if(listEl){
-    if(backupDirHandle && permOk){
-      try{
-        const names = await listRecentBackups(backupDirHandle);
-        listEl.innerHTML = names.length ? names.map(n=>`
-          <div class="wh-row">
-            <span class="wname">${n}</span>
-            <div class="wactions"><button class="btn btn-ghost btn-sm" onclick="requestRestoreFromFolder('${n.replace(/'/g,"\\'")}')">${t('restoreBtn')}</button></div>
-          </div>`).join('') : `<div class="item-meta">${t('backupNoneYet')}</div>`;
-      }catch(e){ listEl.innerHTML = `<div class="item-meta">${t('backupListFailed')}</div>`; }
-    } else {
-      listEl.innerHTML = `<div class="item-meta">${t('backupFolderListUnavailable')}</div>`;
-    }
-  }
-}
-async function requestRestoreFromFolder(name){
-  if(!currentUser || currentUser.role!=='admin' || !backupDirHandle) return;
-  try{
-    const fh = await backupDirHandle.getFileHandle(name);
-    const file = await fh.getFile();
-    const payload = JSON.parse(await file.text());
-    await requestRestore(payload, name);
-  }catch(e){ console.error(e); showToast(t('errBackupReadFailed')); }
 }
 async function onRestoreFileSelected(event){
+  if(!isFounder()) return;
   const file = event.target.files && event.target.files[0];
   event.target.value = '';
   if(!file) return;
@@ -4546,7 +4360,7 @@ async function onRestoreFileSelected(event){
   }catch(e){ showToast(t('errBackupFileInvalid')); }
 }
 async function requestRestore(payload, label){
-  if(!currentUser || currentUser.role!=='admin') return;
+  if(!isFounder()) return;
   if(!payload || typeof payload!=='object' || !Array.isArray(payload.items)){
     showToast(t('errBackupFileInvalid'));
     return;
