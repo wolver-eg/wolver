@@ -4105,6 +4105,7 @@ async function performWipeData(opts){
 // branding and the transaction log) — it never touches user accounts or passwords, so an admin can
 // never lock themselves out of their own app by restoring an old backup.
 const BACKUP_RETENTION_COUNT = 30;
+const BACKUP_FILE_RE = /^wolver-backup-.*\.json$/i;
 const BACKUP_LAST_KEY = 'wolverLastBackupDate';
 let pendingRestorePayload = null;
 let pendingRestoreLabel = '';
