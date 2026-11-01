@@ -918,13 +918,6 @@
 
     <div class="section-head" style="margin-top:16px;"><h2 style="font-size:14px;" data-i18n="driveRecentHeading">آخر النسخ على جوجل درايف</h2></div>
     <div id="driveRecentList"></div>
-
-    <div class="section-head" style="margin-top:16px;"><h2 style="font-size:14px;" data-i18n="backupRestoreFileHeading">استرجاع من ملف على جهازك</h2></div>
-    <div class="item-meta" data-i18n="backupRestoreFileDesc">تقدر ترجع أي نسخة احتياطية (.json) محفوظة في أي مكان على جهازك أو فلاشة، حتى لو مش في المجلد المختار.</div>
-    <div class="form-actions">
-      <input type="file" id="restoreFileInput" class="file-input-hidden" accept="application/json,.json" onchange="onRestoreFileSelected(event)">
-      <label for="restoreFileInput" class="btn btn-ghost file-picker-btn" data-i18n="backupChooseFileBtn">اختيار ملف من جهازك</label>
-    </div>
   </div>
 </div>
 
@@ -4349,16 +4342,6 @@ async function refreshBackupModalUI(){
     const dt = last ? new Date(last) : null;
     lastEl.textContent = last ? ((dt && !isNaN(dt) && last.length>10) ? dt.toLocaleString(appLocale(),{dateStyle:'medium',timeStyle:'short'}) : last) : t('backupNeverYet');
   }
-}
-async function onRestoreFileSelected(event){
-  if(!isFounder()) return;
-  const file = event.target.files && event.target.files[0];
-  event.target.value = '';
-  if(!file) return;
-  try{
-    const payload = JSON.parse(await file.text());
-    await requestRestore(payload, file.name);
-  }catch(e){ showToast(t('errBackupFileInvalid')); }
 }
 async function requestRestore(payload, label){
   if(!isFounder()) return;
