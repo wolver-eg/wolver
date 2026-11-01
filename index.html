@@ -634,6 +634,7 @@
       <div><label data-i18n="unit1NameLabel">اسم الوحدة الأولى (الكبرى)</label><input id="niUnit1Name" data-i18n-placeholder="unit1Placeholder" placeholder="مثال: كرتونة"></div>
       <div><label data-i18n="unit2NameLabel">اسم الوحدة الثانية (الصغرى)</label><input id="niUnit2Name" data-i18n-placeholder="unit2Placeholder" placeholder="مثال: عبوة"></div>
       <div class="full"><label data-i18n="unitRatioLabel">عدد الوحدة الثانية داخل الوحدة الأولى</label><input id="niUnitRatio" type="text" inputmode="decimal" lang="en" oninput="this.value=toLatinDigits(this.value)" step="1" min="2" data-i18n-placeholder="unitRatioPlaceholder" placeholder="مثال: 24"></div>
+      <div class="full"><label data-i18n="unitWeightLabel">وزن الوحدة بالكجم (اختياري)</label><input id="niUnitWeight" type="text" inputmode="decimal" lang="en" oninput="this.value=toLatinDigits(this.value)" data-i18n-placeholder="unitWeightPlaceholder" placeholder="مثال: 5"><div class="item-meta" data-i18n="unitWeightHint" style="margin-top:4px;">وزن الوحدة الصغرى (أو الوحدة الوحيدة لو مفيش وحدتين). بيتحسب منه إجمالي وزن الأذون تلقائي.</div></div>
       <div class="full">
         <label data-i18n="itemImageOptionalLabel">صورة الصنف (اختياري)</label>
         <div style="display:flex;align-items:center;gap:12px;">
@@ -663,6 +664,7 @@
       <div><label data-i18n="unit1NameLabel">اسم الوحدة الأولى (الكبرى)</label><input id="editItemUnit1Name" data-i18n-placeholder="unit1Placeholder" placeholder="مثال: كرتونة"></div>
       <div><label data-i18n="unit2NameLabel">اسم الوحدة الثانية (الصغرى)</label><input id="editItemUnit2Name" data-i18n-placeholder="unit2Placeholder" placeholder="مثال: عبوة"></div>
       <div class="full"><label data-i18n="unitRatioLabel">عدد الوحدة الثانية داخل الوحدة الأولى</label><input id="editItemUnitRatio" type="text" inputmode="decimal" lang="en" oninput="this.value=toLatinDigits(this.value)" step="1" min="2" data-i18n-placeholder="unitRatioPlaceholder" placeholder="مثال: 24"></div>
+      <div class="full"><label data-i18n="unitWeightLabel">وزن الوحدة بالكجم (اختياري)</label><input id="editItemUnitWeight" type="text" inputmode="decimal" lang="en" oninput="this.value=toLatinDigits(this.value)" data-i18n-placeholder="unitWeightPlaceholder" placeholder="مثال: 5"><div class="item-meta" data-i18n="unitWeightHint" style="margin-top:4px;">وزن الوحدة الصغرى (أو الوحدة الوحيدة لو مفيش وحدتين). بيتحسب منه إجمالي وزن الأذون تلقائي.</div></div>
       <div class="full">
         <label data-i18n="itemImageLabel">صورة الصنف</label>
         <div style="display:flex;align-items:center;gap:12px;">
@@ -1758,6 +1760,13 @@ const I18N = {
     unit1NameLabel: `اسم الوحدة الأولى (الكبرى)`,
     unit2NameLabel: `اسم الوحدة الثانية (الصغرى)`,
     unitRatioLabel: `عدد الوحدة الثانية داخل الوحدة الأولى`,
+    unitWeightLabel: `وزن الوحدة بالكجم (اختياري)`,
+    unitWeightHint: `وزن الوحدة الصغرى (أو الوحدة الوحيدة لو مفيش وحدتين). بيتحسب منه إجمالي وزن الأذون تلقائي.`,
+    unitWeightPlaceholder: `مثال: 5`,
+    totalWeightLabel: `إجمالي الوزن`,
+    weightKgUnit: `كجم`,
+    weightPartialNote: `مش محسوب وزن`,
+    unitWeightMetaLabel: `وزن الوحدة`,
     unit1Placeholder: `مثال: كرتونة`,
     unit2Placeholder: `مثال: عبوة`,
     unitRatioPlaceholder: `مثال: 24`,
@@ -2283,6 +2292,13 @@ const I18N = {
     unit1NameLabel: `First (larger) unit name`,
     unit2NameLabel: `Second (smaller) unit name`,
     unitRatioLabel: `How many of the second unit per first unit`,
+    unitWeightLabel: `Unit weight in kg (optional)`,
+    unitWeightHint: `Weight of the smaller unit (or the only unit if there are no two units). Used to calculate the total weight of notes automatically.`,
+    unitWeightPlaceholder: `e.g. 5`,
+    totalWeightLabel: `Total weight`,
+    weightKgUnit: `kg`,
+    weightPartialNote: `weight not counted`,
+    unitWeightMetaLabel: `Unit weight`,
     unit1Placeholder: `e.g. Carton`,
     unit2Placeholder: `e.g. Pack`,
     unitRatioPlaceholder: `e.g. 24`,
@@ -5034,7 +5050,7 @@ function openNewItemForm(){
   document.getElementById('niImgFile').value='';
   document.getElementById('niImgPreview').style.display='none';
   document.getElementById('niReorderLevel').value='';
-  ['niName','niUnit1Name','niUnit2Name','niUnitRatio'].forEach(i=>document.getElementById(i).value='');
+  ['niName','niUnit1Name','niUnit2Name','niUnitRatio','niUnitWeight'].forEach(i=>document.getElementById(i).value='');
   document.getElementById('newItemOverlay').classList.add('active');
   setTimeout(()=>{ try{ document.getElementById('niName').focus(); }catch(e){} }, 60);
 }
@@ -5067,12 +5083,14 @@ async function submitNewItem(){
   if(niImageData) newItem.image = niImageData;
   if(reorderLevel!==null) newItem.reorderLevel = reorderLevel;
   if(unitsResult.units){ Object.assign(newItem, unitsResult.units); }
+  const uwNew = parseFloat(document.getElementById('niUnitWeight').value.trim());
+  if(!isNaN(uwNew) && uwNew>0) newItem.unitWeight = uwNew;
   STATE.items.push(newItem);
   const tx = logTx({itemId:id, itemName:name, type:'item_create', qty:'', location: t('msgItemAdded')});
   const ok = await persist();
   if(ok){
     closeNewItemForm();
-    ['niName','niReorderLevel','niUnit1Name','niUnit2Name','niUnitRatio'].forEach(i=>document.getElementById(i).value='');
+    ['niName','niReorderLevel','niUnit1Name','niUnit2Name','niUnitRatio','niUnitWeight'].forEach(i=>document.getElementById(i).value='');
     niImageData = null;
     document.getElementById('niImgFile').value='';
     document.getElementById('niImgPreview').style.display='none';
@@ -5092,7 +5110,7 @@ function openItemModal(id){
   document.getElementById('editItemBtn').style.display = hasPerm('items','edit') ? '' : 'none';
   document.getElementById('deleteItemBtn').style.display = hasPerm('items','delete') ? '' : 'none';
   document.getElementById('miName').textContent = item.name;
-  document.getElementById('miMeta').textContent = `${t('currentTotalLabel')}: ${totalQtyDisplay(item, itemTotal(item))}`;
+  document.getElementById('miMeta').textContent = `${t('currentTotalLabel')}: ${totalQtyDisplay(item, itemTotal(item))}` + (item.unitWeight>0 ? ` — ${t('unitWeightMetaLabel')}: ${plainQty(item.unitWeight)} ${t('weightKgUnit')}` : '');
   const img = itemImg(item.id);
   const thumbEl = document.getElementById('miThumb');
   if(img){ thumbEl.src=img; thumbEl.style.display='block'; } else { thumbEl.style.display='none'; }
@@ -5137,6 +5155,7 @@ function openEditItem(){
   document.getElementById('editItemUnit1Name').value = item.unit1Name || item.singleUnitName || '';
   document.getElementById('editItemUnit2Name').value = item.unit2Name || '';
   document.getElementById('editItemUnitRatio').value = item.unitRatio || '';
+  document.getElementById('editItemUnitWeight').value = item.unitWeight || '';
   editItemImageData = undefined;
   editItemBatchesRemoved = new Set();
   editItemNewBatches = [];
@@ -5235,6 +5254,7 @@ async function saveEditItem(){
   if(!unitsResult.ok){ showToast(unitsResult.error); return; }
 
   const oldName = item.name;
+  const hadUnitWeight = 'unitWeight' in item, oldUnitWeight = item.unitWeight;
   const hadReorderLevel = 'reorderLevel' in item;
   const oldReorderLevel = item.reorderLevel;
   const hadImage = 'image' in item;
@@ -5249,6 +5269,8 @@ async function saveEditItem(){
   const rlNum = rlRaw ? parseFloat(rlRaw) : NaN;
   if(!isNaN(rlNum) && rlNum>0) item.reorderLevel = rlNum;
   else delete item.reorderLevel;
+  const uwNum = parseFloat(document.getElementById('editItemUnitWeight').value.trim());
+  if(!isNaN(uwNum) && uwNum>0) item.unitWeight = uwNum; else delete item.unitWeight;
   if(editItemImageData === null) delete item.image;
   else if(typeof editItemImageData === 'string') item.image = editItemImageData;
   delete item.unit1Name; delete item.unit2Name; delete item.unitRatio; delete item.singleUnitName;
@@ -5290,6 +5312,7 @@ async function saveEditItem(){
     showToast(t('msgChangesSaved'));
   } else {
     item.name = oldName;
+    if(hadUnitWeight) item.unitWeight = oldUnitWeight; else delete item.unitWeight;
     if(hadReorderLevel) item.reorderLevel = oldReorderLevel; else delete item.reorderLevel;
     if(hadImage) item.image = oldImage; else delete item.image;
     delete item.unit1Name; delete item.unit2Name; delete item.unitRatio; delete item.singleUnitName;
@@ -5794,7 +5817,7 @@ async function commitBulkIn(){
       updatedAt: new Date().toISOString(),
       user: (editingNoteBackup && editingNoteBackup.user) || userName || t('unknownUser'),
       supplier, address, recipient,
-      rows: bulkInRows.map(r=>({...r})),
+      rows: snapRowsWithWeight(bulkInRows),
       appliedAllocations: [], txIds: []
     };
     STATE.notes.unshift(note);
@@ -5833,7 +5856,7 @@ async function commitBulkIn(){
     updatedAt: new Date().toISOString(),
     user: (editingNoteBackup && editingNoteBackup.user) || userName || t('unknownUser'),
     supplier, address, recipient,
-    rows: bulkInRows.map(r=>({...r})),
+    rows: snapRowsWithWeight(bulkInRows),
     appliedAllocations, txIds
   };
   if(isApproving){ note.approvedBy = userName || t('unknownUser'); note.approvedAt = new Date().toISOString(); }
@@ -6032,7 +6055,7 @@ async function commitBulkOut(){
       updatedAt: new Date().toISOString(),
       user: (editingNoteBackup && editingNoteBackup.user) || userName || t('unknownUser'),
       location, address, recipient,
-      rows: bulkOutRows.map(r=>({...r})),
+      rows: snapRowsWithWeight(bulkOutRows),
       appliedAllocations: [], txIds: []
     };
     STATE.notes.unshift(note);
@@ -6071,7 +6094,7 @@ async function commitBulkOut(){
     updatedAt: new Date().toISOString(),
     user: (editingNoteBackup && editingNoteBackup.user) || userName || t('unknownUser'),
     location, address, recipient,
-    rows: bulkOutRows.map(r=>({...r})),
+    rows: snapRowsWithWeight(bulkOutRows),
     appliedAllocations, txIds
   };
   if(isApproving){ note.approvedBy = userName || t('unknownUser'); note.approvedAt = new Date().toISOString(); }
@@ -6249,9 +6272,28 @@ function noteQtyTotalText(rows){
 }
 // Last row of a note table: "إجمالي الكمية" label spanning the first `labelCols` columns, then the total spanning
 // the remaining `valueCols` (so it starts right under the quantity column). Empty tables get no total row.
-function noteTotalRowHtml(rows, labelCols, valueCols){
+// Total weight of a note's rows (kg). Saved notes use the unit weight stamped on each row when it was saved; live tables use the item's current one.
+function noteWeightTotal(rows, useSnapshot){
+  let total = 0, counted = 0; const missing = [];
+  (rows||[]).forEach(r=>{
+    const item = STATE.items.find(x=>x.id===r.itemId);
+    const w = (useSnapshot && r.unitWeight!==undefined) ? r.unitWeight : (item ? item.unitWeight : null);
+    if(w>0){ total += (Number(r.qty)||0)*w; counted++; } else { const nm = (item && item.name) || r.itemName || ''; if(nm && !missing.includes(nm)) missing.push(nm); } 
+  });
+  return {total:Math.round(total*100)/100, counted, missing};
+}
+function noteWeightRowHtml(rows, labelCols, valueCols, useSnapshot){
+  const w = noteWeightTotal(rows, useSnapshot);
+  if(!w.counted) return '';
+  return `<tr class="note-total"><td colspan="${labelCols}" style="text-align:start;">${t('totalWeightLabel')}</td><td colspan="${valueCols}" style="text-align:start;">${plainQty(w.total)} ${t('weightKgUnit')}${w.missing.length ? ' ('+t('weightPartialNote')+': '+w.missing.join('، ')+')' : ''}</td></tr>`;
+}
+// Copies rows for saving, stamping each with its item's unit weight at that moment.
+function snapRowsWithWeight(rows){
+  return rows.map(r=>{ const item = STATE.items.find(x=>x.id===r.itemId); const o = {...r}; if(item && item.unitWeight>0) o.unitWeight = item.unitWeight; else delete o.unitWeight; return o; });
+}
+function noteTotalRowHtml(rows, labelCols, valueCols, useSnapshot){
   if(!rows || !rows.length) return '';
-  return `<tr class="note-total"><td colspan="${labelCols}" style="text-align:start;">${t('totalQtyLabel')}</td><td colspan="${valueCols}" style="text-align:start;">${noteQtyTotalText(rows)}</td></tr>`;
+  return noteWeightRowHtml(rows, labelCols, valueCols, useSnapshot) ? `<tr class="note-total"><td colspan="${labelCols}" style="text-align:start;">${t('totalQtyLabel')}</td><td colspan="${valueCols}" style="text-align:start;">${noteQtyTotalText(rows)}</td></tr>` + noteWeightRowHtml(rows, labelCols, valueCols, useSnapshot) : `<tr class="note-total"><td colspan="${labelCols}" style="text-align:start;">${t('totalQtyLabel')}</td><td colspan="${valueCols}" style="text-align:start;">${noteQtyTotalText(rows)}</td></tr>`;
 }
 // For a saved row snapshot, shows the quantity as originally entered + its unit label when known, else the raw base quantity.
 function rowQtyDisplay(r){
@@ -6331,7 +6373,7 @@ function buildNoteRowsTableHtml(type, rows, note){
   if(type==='in'){
     const head = `<tr><th>${t('colNo')}</th><th>${t('colItemName')}</th><th>${t('colQty')}</th><th>${t('expiryDate')}</th><th>${t('warehouse')}</th></tr>`;
     const body = rows.map((r,i)=>`<tr><td>${i+1}</td><td>${r.itemName}</td><td>${rowQtyDisplay(r)}</td><td>${r.expiry||t('statusUnspecified')}</td><td>${r.whLabel}</td></tr>`).join('');
-    return `<table class="note-table">${head}${body}${noteTotalRowHtml(rows,2,3)}</table>`;
+    return `<table class="note-table">${head}${body}${noteTotalRowHtml(rows,2,3,!!note)}</table>`;
   }
   if(type==='opening'){
     const whCols = warehouseIds();
@@ -6342,11 +6384,11 @@ function buildNoteRowsTableHtml(type, rows, note){
   if(type==='transfer'){
     const head = `<tr><th>${t('colNo')}</th><th>${t('colItemName')}</th><th>${t('fromWarehouse')}</th><th>${t('toWarehouse')}</th><th>${t('colQty')}</th><th>${t('expiryDate')}</th></tr>`;
     const body = rows.map((r,i)=>`<tr><td>${i+1}</td><td>${r.itemName}</td><td>${r.fromLabel}</td><td>${r.toLabel}</td><td>${rowQtyDisplay(r)}</td><td>${r.expiry||''}</td></tr>`).join('');
-    return `<table class="note-table">${head}${body}${noteTotalRowHtml(rows,4,2)}</table>`;
+    return `<table class="note-table">${head}${body}${noteTotalRowHtml(rows,4,2,!!note)}</table>`;
   }
   const head = `<tr><th>${t('colNo')}</th><th>${t('colItemName')}</th><th>${t('colQty')}</th><th>${t('expiryDate')}</th><th>${t('warehouse')}</th></tr>`;
   const body = buildOutRowsHtml(rows, note);
-  return `<table class="note-table">${head}${body}${noteTotalRowHtml(rows,2,3)}</table>`;
+  return `<table class="note-table">${head}${body}${noteTotalRowHtml(rows,2,3,!!note)}</table>`;
 }
 function buildRecipientLineHtml(recipient){
   const val = (recipient||'').trim();
@@ -6922,7 +6964,7 @@ async function commitTransfer(){
       updatedAt: new Date().toISOString(),
       user: (editingNoteBackup && editingNoteBackup.user) || userName || t('unknownUser'),
       recipient,
-      rows: transferRows.map(r=>({...r})),
+      rows: snapRowsWithWeight(transferRows),
       appliedAllocations: [], txIds: []
     };
     STATE.notes.unshift(note);
@@ -6967,7 +7009,7 @@ async function commitTransfer(){
     updatedAt: new Date().toISOString(),
     user: (editingNoteBackup && editingNoteBackup.user) || userName || t('unknownUser'),
     recipient,
-    rows: transferRows.map(r=>({...r})),
+    rows: snapRowsWithWeight(transferRows),
     appliedAllocations, txIds
   };
   if(isApproving){ note.approvedBy = userName || t('unknownUser'); note.approvedAt = new Date().toISOString(); }
