@@ -6363,10 +6363,10 @@ function buildSavedNotePrintHtml(id){
   if(note.type==='in' && note.address) extraLine += `<div>${t('contactAddressLabel')}: ${note.address}</div>`;
   if(note.type==='out' && note.location) extraLine = `<div>${t('customerLabel')}: ${note.location}</div>`;
   if(note.type==='out' && note.address) extraLine += `<div>${t('contactAddressLabel')}: ${note.address}</div>`;
-  extraLine += `<div>${t('createdByLabel')}: <bdi>${note.user||''}</bdi></div>`;
-  if(note.approvedBy){ const appDate = new Date(note.approvedAt).toLocaleString(appLocale(),{dateStyle:'medium',timeStyle:'short'}); extraLine += `<div>${t('approvedByLabel')}: <bdi>${note.approvedBy}</bdi></div><div>${t('approvalDateLabel')}: <bdi>${appDate}</bdi></div>`; }
+  let metaRight = `<div>${t('createdByLabel')}: <bdi>${note.user||''}</bdi></div>`;
+  if(note.approvedBy){ const appDate = new Date(note.approvedAt).toLocaleString(appLocale(),{dateStyle:'medium',timeStyle:'short'}); metaRight += `<div>${t('approvedByLabel')}: <bdi>${note.approvedBy}</bdi></div><div>${t('approvalDateLabel')}: <bdi>${appDate}</bdi></div>`; }
   const recipientLine = buildRecipientLineHtml(note.recipient);
-  return `<h2>${title}</h2><div class="note-meta-grid"><div>${t('dateLabel')}: <bdi>${dateStr}</bdi></div>${extraLine}</div>${buildNoteRowsTableHtml(note.type, note.rows, note)}${recipientLine}`;
+  return `<h2>${title}</h2><div class="note-meta-grid"><div><div>${t('dateLabel')}: <bdi>${dateStr}</bdi></div>${extraLine}</div><div>${metaRight}</div></div>${buildNoteRowsTableHtml(note.type, note.rows, note)}${recipientLine}`;
 }
 function openNotesHub(){ document.getElementById('notesHubOverlay').classList.add('active'); }
 function closeNotesHub(){ document.getElementById('notesHubOverlay').classList.remove('active'); }
@@ -6470,7 +6470,7 @@ function buildBulkPrintHtml(which){
   const serial = editingNoteMeta ? editingNoteMeta.serial : (liveNoteSession[which] ? liveNoteSession[which].serial : null);
   const title = serial ? `${titleBase} ${t('numberLabel')} ${serial}` : titleBase;
   const dateStr = previewNoteDate(which);
-  return `<h2>${title}</h2><div class="note-meta-grid"><div>${t('dateLabel')}: <bdi>${dateStr}</bdi></div>${extraLine}${previewMetaHtml(which)}</div>${tableHtml}${recipientLine}`;
+  return `<h2>${title}</h2><div class="note-meta-grid"><div><div>${t('dateLabel')}: <bdi>${dateStr}</bdi></div>${extraLine}</div><div>${previewMetaHtml(which)}</div></div>${tableHtml}${recipientLine}`;
 }
 
 /* ============ WAREHOUSES MANAGEMENT ============ */
@@ -6892,7 +6892,7 @@ function buildTransferPrintHtml(){
   const dateStr = previewNoteDate('tr');
   const recipient = document.getElementById('trRecipientName').value.trim();
   const recipientLine = buildRecipientLineHtml(recipient);
-  return `<h2>${title}</h2><div class="note-meta-grid"><div>${t('dateLabel')}: <bdi>${dateStr}</bdi></div>${previewMetaHtml('tr')}</div>${buildNoteRowsTableHtml('transfer', transferRows)}${recipientLine}`;
+  return `<h2>${title}</h2><div class="note-meta-grid"><div><div>${t('dateLabel')}: <bdi>${dateStr}</bdi></div></div><div>${previewMetaHtml('tr')}</div></div>${buildNoteRowsTableHtml('transfer', transferRows)}${recipientLine}`;
 }
 function printTransferAndClear(){
   doPrint(buildTransferPrintHtml());
