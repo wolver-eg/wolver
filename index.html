@@ -137,6 +137,14 @@
   .item-card{background:rgba(var(--glass-rgb),.86);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(var(--glass-rgb),.5);border-radius:14px;padding:14px 16px;cursor:pointer;transition:border-color .15s,transform .15s,box-shadow .15s;display:flex;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.18);}
   .item-card:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(30,20,10,.1);border-color:var(--brand);}
   .item-thumb{width:104px;height:104px;border-radius:10px;object-fit:contain;background:var(--canvas);flex:none;border:1px solid var(--line);}
+  .note-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 24px;}
+  .thumb-wrap{position:relative;flex:none;display:flex;}
+  .thumb-wrap.oos .item-thumb{filter:grayscale(1);opacity:.5;}
+  .thumb-wrap .oos-badge{position:absolute;left:0;right:0;bottom:0;background:rgba(192,32,32,.94);color:#fff;font-weight:800;font-size:12px;text-align:center;padding:4px 2px;border-radius:0 0 10px 10px;line-height:1.2;pointer-events:none;}
+  .thumb-wrap .oos-badge .s{display:none;}
+  .item-grid.view-compact .thumb-wrap .oos-badge, .item-grid.view-list .thumb-wrap .oos-badge{font-size:9.5px;padding:2px 1px;border-radius:0 0 8px 8px;}
+  .item-grid.view-compact .thumb-wrap .oos-badge .l, .item-grid.view-list .thumb-wrap .oos-badge .l{display:none;}
+  .item-grid.view-compact .thumb-wrap .oos-badge .s, .item-grid.view-list .thumb-wrap .oos-badge .s{display:inline;}
   .item-thumb.placeholder{display:flex;align-items:center;justify-content:center;font-family:'Cairo';font-weight:800;color:var(--ink-soft);font-size:32px;}
   .item-card .body{flex:1;min-width:0;}
   .item-card .name{font-weight:700;font-size:14px;margin-bottom:6px;}
@@ -1645,6 +1653,7 @@ const I18N = {
     totalLabel: `الإجمالي`,
     totalQtyLabel: `إجمالي الكمية`,
     outOfStockLabel: `نفد المخزون`,
+    outOfStockShort: `نفد`,
     noneLabel: `لا يوجد`,
     noResults: `لا توجد نتائج`,
     currentTotalLabel: `الإجمالي الحالي`,
@@ -2169,6 +2178,7 @@ const I18N = {
     totalLabel: `Total`,
     totalQtyLabel: `Total quantity`,
     outOfStockLabel: `Out of stock`,
+    outOfStockShort: `Out`,
     noneLabel: `None`,
     noResults: `No results`,
     currentTotalLabel: `Current Total`,
@@ -5000,12 +5010,14 @@ function renderItems(){
     const chips = sorted.map(b=>{ const total=batchTotal(b); if(total<=0) return '<span class="chip empty"></span>'; const st=batchStatus(b); return `<span class="chip ${st.level}"></span>`; }).join('');
     const img = itemImg(it.id);
     const thumb = img ? `<img class="item-thumb zoomable" src="${img}" onclick="event.stopPropagation(); openImageZoom(this.src)">` : `<div class="item-thumb placeholder">${(it.name||'?').trim()[0]||'?'}</div>`;
+    const oos = itemTotal(it) <= 0;
+    const thumbBox = `<div class="thumb-wrap${oos?' oos':''}">${thumb}${oos?`<span class="oos-badge"><span class="l">${t('outOfStockLabel')}</span><span class="s">${t('outOfStockShort')}</span></span>`:''}</div>`;
     const dragAttrs = dragEnabled ? `draggable="true" ondragstart="onItemDragStart(event,'${it.id}')" ondragover="onItemDragOver(event)" ondrop="onItemDrop(event,'${it.id}')" ondragend="onItemDragEnd(event)" style="cursor:grab;"` : '';
     const clickHandler = dragEnabled ? '' : `onclick="openItemModal('${it.id}')"`;
     const handle = dragEnabled ? '<span style="font-size:18px;color:var(--ink-soft);align-self:center;">⠿</span>' : '';
     return `<div class="item-card" ${clickHandler} ${dragAttrs}>
         ${handle}
-        ${thumb}
+        ${thumbBox}
         <div class="body">
           <div class="name">${it.name}</div>
           <div class="sub"><span>${it.batches.length>0 ? it.batches.length+' '+t('batchUnit') : t('noBatchesForItem')}</span><span style="font-size:16px;font-weight:800;color:var(--ink);font-family:'IBM Plex Sans Arabic',sans-serif;">${t('totalLabel')}: ${totalQtyDisplay(it, itemTotal(it))}</span></div>
@@ -6352,7 +6364,7 @@ function buildSavedNotePrintHtml(id){
   extraLine += `<div>${t('createdByLabel')}: <bdi>${note.user||''}</bdi></div>`;
   if(note.approvedBy){ const appDate = new Date(note.approvedAt).toLocaleString(appLocale(),{dateStyle:'medium',timeStyle:'short'}); extraLine += `<div>${t('approvedByLabel')}: <bdi>${note.approvedBy}</bdi></div><div>${t('approvalDateLabel')}: <bdi>${appDate}</bdi></div>`; }
   const recipientLine = buildRecipientLineHtml(note.recipient);
-  return `<h2>${title}</h2><div>${t('dateLabel')}: <bdi>${dateStr}</bdi></div>${extraLine}<br>${buildNoteRowsTableHtml(note.type, note.rows, note)}${recipientLine}`;
+  return `<h2>${title}</h2><div class="note-meta-grid"><div>${t('dateLabel')}: <bdi>${dateStr}</bdi></div>${extraLine}</div><br>${buildNoteRowsTableHtml(note.type, note.rows, note)}${recipientLine}`;
 }
 function openNotesHub(){ document.getElementById('notesHubOverlay').classList.add('active'); }
 function closeNotesHub(){ document.getElementById('notesHubOverlay').classList.remove('active'); }
@@ -6456,7 +6468,7 @@ function buildBulkPrintHtml(which){
   const serial = editingNoteMeta ? editingNoteMeta.serial : (liveNoteSession[which] ? liveNoteSession[which].serial : null);
   const title = serial ? `${titleBase} ${t('numberLabel')} ${serial}` : titleBase;
   const dateStr = previewNoteDate(which);
-  return `<h2>${title}</h2><div>${t('dateLabel')}: <bdi>${dateStr}</bdi></div>${extraLine}${previewMetaHtml(which)}<br>${tableHtml}${recipientLine}`;
+  return `<h2>${title}</h2><div class="note-meta-grid"><div>${t('dateLabel')}: <bdi>${dateStr}</bdi></div>${extraLine}${previewMetaHtml(which)}</div><br>${tableHtml}${recipientLine}`;
 }
 
 /* ============ WAREHOUSES MANAGEMENT ============ */
@@ -6878,7 +6890,7 @@ function buildTransferPrintHtml(){
   const dateStr = previewNoteDate('tr');
   const recipient = document.getElementById('trRecipientName').value.trim();
   const recipientLine = buildRecipientLineHtml(recipient);
-  return `<h2>${title}</h2><div>${t('dateLabel')}: <bdi>${dateStr}</bdi></div>${previewMetaHtml('tr')}<br>${buildNoteRowsTableHtml('transfer', transferRows)}${recipientLine}`;
+  return `<h2>${title}</h2><div class="note-meta-grid"><div>${t('dateLabel')}: <bdi>${dateStr}</bdi></div>${previewMetaHtml('tr')}</div><br>${buildNoteRowsTableHtml('transfer', transferRows)}${recipientLine}`;
 }
 function printTransferAndClear(){
   doPrint(buildTransferPrintHtml());
