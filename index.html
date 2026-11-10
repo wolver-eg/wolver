@@ -546,6 +546,13 @@
           <button class="dd-item" data-view-opt="list" onclick="setItemViewMode('list')" type="button"><span data-i18n="viewModeList">قائمة</span><svg class="dd-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
         </div>
       </div>
+      <div class="dd" id="exportItemsDD" style="display:none;">
+        <button class="btn btn-ghost dd-trigger" onclick="toggleDD(event,this)" type="button" aria-haspopup="true"><svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <span data-i18n="exportBtn">تصدير إكسيل</span></button>
+        <div class="dd-menu" role="menu">
+          <button class="dd-item" onclick="exportItemsXlsx()" type="button"><span data-i18n="exportItemsBtn">الأصناف والأرصدة</span></button>
+          <button class="dd-item" onclick="exportBatchesXlsx()" type="button"><span data-i18n="exportBatchesBtn">الباتشات والصلاحية</span></button>
+        </div>
+      </div>
       <button id="newItemBtn" class="btn btn-teal" onclick="openNewItemForm()">+ <span data-i18n="newItemBtn">صنف جديد</span></button>
     </div>
     <div id="reorderHint" class="item-meta" style="display:none;margin-bottom:8px;align-items:center;justify-content:space-between;gap:10px;">
@@ -557,7 +564,10 @@
 
   <div class="view" id="view-log">
     <div class="section-head"><h2 data-i18n="allTransactionsLog">سجل كل الحركات</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button id="exportLogBtn" class="btn btn-ghost btn-sm" onclick="exportLogXlsx()" type="button" style="display:none;"><svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <span data-i18n="exportLogBtn">تصدير إكسيل</span></button>
       <button class="btn btn-danger btn-sm" onclick="clearLog()"><svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> <span data-i18n="clearLogBtn">مسح السجل</span></button>
+      </div>
     </div>
     <div class="log-filters">
       <select id="logType" onchange="renderLog()">
@@ -802,6 +812,7 @@
       <button id="notesHubBulkInBtn" class="btn btn-teal" onclick="openSavedNotes('in')"><svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <span data-i18n="inNotes">أذون الإضافة</span></button>
       <button id="notesHubBulkOutBtn" class="btn btn-teal" onclick="openSavedNotes('out')"><svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> <span data-i18n="outNotes">أذون الصرف</span></button>
       <button id="notesHubTransferBtn" class="btn btn-indigo" onclick="openSavedNotes('transfer')"><svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> <span data-i18n="transferNotes">أذون التحويل</span></button>
+      <button id="exportNotesBtn" class="btn btn-ghost" onclick="exportNotesXlsx()" type="button" style="display:none;"><svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <span data-i18n="exportNotesBtn">تصدير كل الأذونات (إكسيل)</span></button>
     </div>
   </div>
 </div>
@@ -1937,6 +1948,28 @@ const I18N = {
     actEdit: `تعديل`,
     actDelete: `حذف`,
     actPrint: `طباعة`,
+    actExport: `تصدير إلى إكسيل`,
+    permExportTitle: `التصدير`,
+    exportBtn: `تصدير إكسيل`,
+    exportItemsBtn: `الأصناف والأرصدة`,
+    exportBatchesBtn: `الباتشات والصلاحية`,
+    exportLogBtn: `تصدير إكسيل`,
+    exportNotesBtn: `تصدير كل الأذونات (إكسيل)`,
+    msgExportPreparing: `جاري تجهيز الملف...`,
+    msgExportDone: `تم تنزيل الملف`,
+    errExportFailed: `تعذّر إنشاء الملف. اتأكد من الاتصال بالإنترنت وجرّب تاني.`,
+    errExportNoPerm: `ليس لديك صلاحية التصدير`,
+    xlSheetItems: `الأصناف`, xlSheetBatches: `الباتشات`, xlSheetLog: `سجل الحركات`, xlSheetNotes: `الأذونات`,
+    xlFileItems: `الأصناف-والأرصدة`, xlFileBatches: `الباتشات-والصلاحية`, xlFileLog: `سجل-الحركات`, xlFileNotes: `الأذونات`,
+    xlColItem: `اسم الصنف`, xlColUnit1: `الوحدة الكبرى`, xlColUnit2: `الوحدة الصغرى`, xlColRatio: `عدد الصغرى في الكبرى`,
+    xlColReorder: `حد الطلب`, xlColWeight: `وزن الوحدة الصغرى (كجم)`, xlBalanceOf: `رصيد`, xlSmallUnit: `بالوحدة الصغرى`,
+    xlColTotalBase: `الإجمالي (بالوحدة الصغرى)`, xlColFullBig: `وحدات كبرى كاملة`, xlColRemSmall: `وحدات صغرى متبقية`,
+    xlColStatus: `الحالة`, xlStatusOut: `نفد`, xlStatusLow: `عند حد الطلب أو أقل`, xlStatusOk: `سليم`,
+    xlColExpiry: `تاريخ الصلاحية`, xlColExpStatus: `حالة الصلاحية`,
+    xlColTime: `التاريخ والوقت`, xlColType: `النوع`, xlColQtyBase: `الكمية (بالوحدة الصغرى)`, xlColDetails: `التفاصيل`, xlColUser: `المستخدم`, xlColApprovedBy: `اعتمده`,
+    xlColSerial: `رقم الإذن`, xlColNoteStatus: `حالة الإذن`, xlNotePending: `بانتظار الموافقة`, xlNoteDone: `مؤكد`,
+    xlColParty: `المورد / العميل`, xlColAddress: `العنوان`, xlColRecipient: `المستلم`, xlColCreator: `أنشأه`,
+    xlColQtyEntered: `الكمية المُدخلة`, xlColWh: `المخزن / من مخزن`, xlColToWh: `إلى مخزن`,
     errChooseDiffWarehouses: `اختر مخزنين مختلفين`,
     errCompleteRowData: `استكمل بيانات الصف`,
     errQtyExceedsAvail: `الكمية المطلوبة أكبر من المتاح`,
@@ -2469,6 +2502,28 @@ This will replace all current data with this older backup, and this restore itse
     actEdit: `Edit`,
     actDelete: `Delete`,
     actPrint: `Print`,
+    actExport: `Export to Excel`,
+    permExportTitle: `Export`,
+    exportBtn: `Export to Excel`,
+    exportItemsBtn: `Items & balances`,
+    exportBatchesBtn: `Batches & expiry`,
+    exportLogBtn: `Export to Excel`,
+    exportNotesBtn: `Export all notes (Excel)`,
+    msgExportPreparing: `Preparing the file...`,
+    msgExportDone: `File downloaded`,
+    errExportFailed: `Couldn't create the file. Check your internet connection and try again.`,
+    errExportNoPerm: `You don't have permission to export`,
+    xlSheetItems: `Items`, xlSheetBatches: `Batches`, xlSheetLog: `Transactions`, xlSheetNotes: `Notes`,
+    xlFileItems: `items-balances`, xlFileBatches: `batches-expiry`, xlFileLog: `transactions-log`, xlFileNotes: `notes`,
+    xlColItem: `Item name`, xlColUnit1: `Larger unit`, xlColUnit2: `Smaller unit`, xlColRatio: `Smaller units per larger unit`,
+    xlColReorder: `Reorder level`, xlColWeight: `Smaller-unit weight (kg)`, xlBalanceOf: `Balance`, xlSmallUnit: `in smaller units`,
+    xlColTotalBase: `Total (in smaller units)`, xlColFullBig: `Whole larger units`, xlColRemSmall: `Remaining smaller units`,
+    xlColStatus: `Status`, xlStatusOut: `Out of stock`, xlStatusLow: `At or below reorder level`, xlStatusOk: `OK`,
+    xlColExpiry: `Expiry date`, xlColExpStatus: `Expiry status`,
+    xlColTime: `Date & time`, xlColType: `Type`, xlColQtyBase: `Quantity (smaller units)`, xlColDetails: `Details`, xlColUser: `User`, xlColApprovedBy: `Approved by`,
+    xlColSerial: `Note no.`, xlColNoteStatus: `Note status`, xlNotePending: `Pending approval`, xlNoteDone: `Confirmed`,
+    xlColParty: `Supplier / Customer`, xlColAddress: `Address`, xlColRecipient: `Recipient`, xlColCreator: `Created by`,
+    xlColQtyEntered: `Quantity entered`, xlColWh: `Warehouse / From`, xlColToWh: `To warehouse`,
     errChooseDiffWarehouses: `Choose two different warehouses`,
     errCompleteRowData: `Complete the row's data`,
     errQtyExceedsAvail: `Requested quantity exceeds what is available`,
@@ -3072,6 +3127,7 @@ const PERMISSION_DEFS = {
   bulkOut: {label:'bulkOutTitle', group:'notes', actions:{view:'actView', create:'actCreate', edit:'actEdit', delete:'actDelete', print:'actPrint'}},
   transfer: {label:'transferTitle', group:'notes', actions:{view:'actView', create:'actCreate', edit:'actEdit', delete:'actDelete', print:'actPrint'}},
   contacts: {label:'contactsTitle', actions:{view:'actView', create:'actCreate', edit:'actEdit', delete:'actDelete'}},
+  exportData: {label:'permExportTitle', actions:{use:'actExport'}},
 };
 function defaultPermissions(){
   const p = {};
@@ -3079,6 +3135,7 @@ function defaultPermissions(){
     p[mod] = {};
     Object.keys(PERMISSION_DEFS[mod].actions).forEach(act=>{ p[mod][act] = true; });
   });
+  p.exportData = { use:false }; // التصدير لإكسيل: مقفول افتراضيًا، المدير بس هو اللي يديه لمن يشاء
   return p;
 }
 function hasPerm(mod, act){
@@ -3122,6 +3179,9 @@ function applyPermissions(){
   set('notesHubBulkInBtn', hasPerm('bulkIn','view'));
   set('notesHubBulkOutBtn', hasPerm('bulkOut','view'));
   set('notesHubTransferBtn', hasPerm('transfer','view'));
+  set('exportItemsDD', canExport() && hasPerm('items','view'));
+  set('exportLogBtn', canExport());
+  set('exportNotesBtn', canExport() && (hasPerm('bulkIn','view') || hasPerm('bulkOut','view') || hasPerm('transfer','view')));
 }
 let bulkInRows = [];
 let bulkOutRows = [];
@@ -4470,6 +4530,121 @@ function resizeImageFile(file, maxDim, quality){
     reader.readAsDataURL(file);
   });
 }
+
+
+/* ============ EXPORT TO EXCEL (قراءة فقط — مفيش أي تعديل على البيانات) ============ */
+const XLSX_CDN_URL = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+let xlsxLibPromise = null;
+function loadXlsxLib(){
+  if(window.XLSX) return Promise.resolve(window.XLSX);
+  if(xlsxLibPromise) return xlsxLibPromise;
+  xlsxLibPromise = new Promise((resolve, reject)=>{
+    const sc = document.createElement('script');
+    sc.src = XLSX_CDN_URL;
+    sc.onload = ()=> window.XLSX ? resolve(window.XLSX) : reject(new Error('xlsx missing'));
+    sc.onerror = ()=> reject(new Error('xlsx load failed'));
+    document.head.appendChild(sc);
+  }).catch(err=>{ xlsxLibPromise = null; throw err; });
+  return xlsxLibPromise;
+}
+function canExport(){
+  if(!currentUser) return false;
+  if(currentUser.role==='admin') return true;
+  const p = currentUser.permissions;
+  return !!(p && p.exportData && p.exportData.use===true);
+}
+function xlDateTime(iso){
+  const d = new Date(iso); if(isNaN(d)) return '';
+  const p = n=>String(n).padStart(2,'0');
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());
+}
+function xlStamp(){ return xlDateTime(new Date().toISOString()).slice(0,10); }
+function xlWhBalance(item, wh){ return item.batches.reduce((s,b)=>s+((b.balances && b.balances[wh])||0),0); }
+function xlSplit(item, qty){
+  if(!itemHasUnits(item)) return {big:'', small:qty};
+  const big = Math.floor((qty+1e-9)/item.unitRatio);
+  let rem = Math.round((qty - big*item.unitRatio)*100)/100; if(rem<0) rem = 0;
+  return {big, small:rem};
+}
+function buildItemsSheet(){
+  const whs = warehouseIds();
+  const headers = [t('xlColItem'), t('xlColUnit1'), t('xlColUnit2'), t('xlColRatio'), t('xlColReorder'), t('xlColWeight'),
+    ...whs.map(w=>t('xlBalanceOf')+' '+whName(w)+' ('+t('xlSmallUnit')+')'),
+    t('xlColTotalBase'), t('xlColFullBig'), t('xlColRemSmall'), t('xlColStatus')];
+  const rows = orderedItems(STATE.items).map(it=>{
+    const hu = itemHasUnits(it), total = itemTotal(it), sp = xlSplit(it, total), lvl = effectiveReorderLevel(it);
+    const st = total<=0 ? t('xlStatusOut') : (total<=lvl ? t('xlStatusLow') : t('xlStatusOk'));
+    return [it.name, hu?it.unit1Name:'', hu?it.unit2Name:(itemSingleUnitName(it)||''), hu?it.unitRatio:'', lvl, it.unitWeight>0?it.unitWeight:'',
+      ...whs.map(w=>xlWhBalance(it,w)), total, sp.big, sp.small, st];
+  });
+  return {name:t('xlSheetItems'), headers, rows};
+}
+function buildBatchesSheet(){
+  const whs = warehouseIds();
+  const headers = [t('xlColItem'), t('xlColExpiry'),
+    ...whs.map(w=>t('xlBalanceOf')+' '+whName(w)+' ('+t('xlSmallUnit')+')'),
+    t('xlColTotalBase'), t('xlColFullBig'), t('xlColRemSmall'), t('xlColExpStatus')];
+  const rows = [];
+  orderedItems(STATE.items).forEach(it=>{
+    sortBatchesFEFO(it.batches).forEach(b=>{
+      const tot = batchTotal(b); if(tot<=0) return;
+      const sp = xlSplit(it, tot);
+      rows.push([it.name, b.expiry||'', ...whs.map(w=>(b.balances && b.balances[w])||0), tot, sp.big, sp.small, batchStatus(b).text]);
+    });
+  });
+  return {name:t('xlSheetBatches'), headers, rows};
+}
+function buildLogSheet(){
+  const headers = [t('xlColTime'), t('xlColItem'), t('xlColType'), t('xlColQtyBase'), t('xlColDetails'), t('xlColUser'), t('xlColApprovedBy')];
+  const rows = STATE.transactions.map(tx=>[
+    xlDateTime(tx.ts), localizeLogText(tx.itemName)||'', t(TX_LABEL[tx.type])||tx.type,
+    (typeof tx.qty==='number' ? tx.qty : ''), localizeLogText(tx.location)||'', tx.user||'',
+    (tx.approvedBy && tx.approvedBy!==tx.user) ? tx.approvedBy : ''
+  ]);
+  return {name:t('xlSheetLog'), headers, rows};
+}
+function buildNotesSheet(){
+  const modOf = {in:'bulkIn', out:'bulkOut', transfer:'transfer'};
+  const typeLabel = {in:t('bulkInTitle'), out:t('bulkOutTitle'), transfer:t('transferTitle')};
+  const headers = [t('xlColSerial'), t('xlColType'), t('xlColNoteStatus'), t('xlColTime'), t('xlColParty'), t('xlColAddress'), t('xlColRecipient'),
+    t('xlColCreator'), t('xlColApprovedBy'), t('xlColItem'), t('xlColQtyBase'), t('xlColQtyEntered'), t('xlColExpiry'), t('xlColWh'), t('xlColToWh')];
+  const rows = [];
+  (STATE.notes||[]).filter(n=>modOf[n.type] && hasPerm(modOf[n.type],'view')).forEach(n=>{
+    const head = [n.serial, typeLabel[n.type]||n.type, isPendingNote(n)?t('xlNotePending'):t('xlNoteDone'), xlDateTime(n.createdAt),
+      n.type==='in' ? (n.supplier||'') : (n.type==='out' ? (n.location||'') : ''), n.address||'', n.recipient||'', n.user||'', n.approvedBy||''];
+    const rs = (n.rows && n.rows.length) ? n.rows : [null];
+    rs.forEach(r=>{
+      if(!r){ rows.push([...head,'','','','','','']); return; }
+      const fromWh = n.type==='transfer' ? (r.fromLabel||'') : (r.whLabel||'');
+      const toWh = n.type==='transfer' ? (r.toLabel||'') : '';
+      rows.push([...head, r.itemName||'', (typeof r.qty==='number'?r.qty:''), rowQtyDisplay(r), r.expiry||'', fromWh, toWh]);
+    });
+  });
+  return {name:t('xlSheetNotes'), headers, rows};
+}
+async function exportToXlsx(fileBase, sheet){
+  if(!canExport()){ showToast(t('errExportNoPerm')); return; }
+  try{
+    showToast(t('msgExportPreparing'));
+    const X = await loadXlsxLib();
+    const wb = X.utils.book_new();
+    const ws = X.utils.aoa_to_sheet([sheet.headers, ...sheet.rows]);
+    ws['!cols'] = sheet.headers.map((h,i)=>{
+      let w = String(h).length + 2;
+      sheet.rows.slice(0,300).forEach(r=>{ const l = String(r[i]==null?'':r[i]).length + 2; if(l>w) w = l; });
+      return {wch:Math.min(48, w)};
+    });
+    ws['!autofilter'] = {ref: X.utils.encode_range({s:{r:0,c:0}, e:{r:Math.max(sheet.rows.length,1), c:sheet.headers.length-1}})};
+    X.utils.book_append_sheet(wb, ws, sheet.name.replace(/[\\\/\?\*\[\]:]/g,' ').slice(0,31));
+    wb.Workbook = {Views:[{RTL: document.documentElement.dir==='rtl'}]};
+    X.writeFile(wb, fileBase+'-'+xlStamp()+'.xlsx');
+    showToast(t('msgExportDone'));
+  }catch(err){ console.error(err); showToast(t('errExportFailed')); }
+}
+function exportItemsXlsx(){ closeAllDD(); exportToXlsx(t('xlFileItems'), buildItemsSheet()); }
+function exportBatchesXlsx(){ closeAllDD(); exportToXlsx(t('xlFileBatches'), buildBatchesSheet()); }
+function exportLogXlsx(){ exportToXlsx(t('xlFileLog'), buildLogSheet()); }
+function exportNotesXlsx(){ exportToXlsx(t('xlFileNotes'), buildNotesSheet()); }
 
 /* ============ DASHBOARD ============ */
 function allBatchesFlat(){ const out=[]; STATE.items.forEach(it=>it.batches.forEach(b=>out.push({item:it,batch:b}))); return out; }
