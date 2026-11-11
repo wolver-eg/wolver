@@ -4584,7 +4584,7 @@ function buildItemsSheet(){
   const rows = orderedItems(STATE.items).map(it=>{
     const hu = itemHasUnits(it), total = itemTotal(it), sp = xlSplit(it, total), lvl = effectiveReorderLevel(it);
     const st = total<=0 ? t('xlStatusOut') : (total<=lvl ? t('xlStatusLow') : t('xlStatusOk'));
-    return [it.name, hu?it.unit1Name:'', hu?it.unit2Name:(itemSingleUnitName(it)||''), hu?it.unitRatio:'', lvl, it.unitWeight>0?it.unitWeight:'',
+    return [it.name, hu?ul(it.unit1Name):'', hu?ul(it.unit2Name):(itemSingleUnitName(it)||''), hu?it.unitRatio:'', lvl, it.unitWeight>0?it.unitWeight:'',
       ...whs.map(w=>xlWhBalance(it,w)), total, sp.big, sp.small, st];
   });
   return {name:t('xlSheetItems'), headers, rows};
@@ -4722,12 +4722,26 @@ function orderedItems(list){
 }
 
 /* ============ UNITS OF MEASURE (unit1 = larger, unit2 = smaller) ============ */
+// English display names for common Arabic unit names (display only — stored names never change).
+// Unknown/custom names are shown exactly as typed.
+const UNIT_NAMES_EN = {'كرتونه':'Carton','كراتين':'Cartons','عبوه':'Pack','عبوات':'Packs','قطعه':'Piece','قطع':'Pieces','شوال':'Sack','كيس':'Bag','علبه':'Box','صندوق':'Box','برميل':'Drum','جركن':'Jerrycan','دستة':'Dozen','دسته':'Dozen','لتر':'Liter','كيلو':'Kg','جالون':'Gallon','طقم':'Set','زجاجه':'Bottle','باكت':'Packet','باكيت':'Packet','لفه':'Roll'};
+function ul(name){
+  if(!name || typeof LANG==='undefined' || LANG!=='en') return name;
+  const k = String(name).trim().replace(/ة$/,'ه').replace(/ى/g,'ي').replace(/[\u064B-\u0652]/g,'');
+  return UNIT_NAMES_EN[k] || name;
+}
+// English plural for a translated unit label when the quantity is not exactly 1.
+const UNIT_PLURAL_EN = {Carton:'Cartons',Pack:'Packs',Piece:'Pieces',Sack:'Sacks',Bag:'Bags',Box:'Boxes',Drum:'Drums',Jerrycan:'Jerrycans',Dozen:'Dozens',Liter:'Liters',Gallon:'Gallons',Set:'Sets',Bottle:'Bottles',Packet:'Packets',Roll:'Rolls'};
+function ulp(name, n){
+  const l = ul(name);
+  return (typeof LANG!=='undefined' && LANG==='en' && Number(n)!==1 && UNIT_PLURAL_EN[l]) || l;
+}
 function itemHasUnits(item){ return !!(item && item.unit1Name && item.unit2Name && typeof item.unitRatio==='number' && item.unitRatio>1); }
 // A simple named counting unit with no second tier/conversion (e.g. "شوال" for a sack, "قطعة" for
 // a single-piece display stand) — distinct from the dual-unit (carton/pack + ratio) system above.
-function itemSingleUnitName(item){ return (item && !itemHasUnits(item) && item.singleUnitName) ? item.singleUnitName : null; }
+function itemSingleUnitName(item){ return (item && !itemHasUnits(item) && item.singleUnitName) ? ul(item.singleUnitName) : null; }
 // The label to show next to a plain (non-converted) quantity for this item, if any custom one is set.
-function itemBaseUnitLabel(item){ return itemHasUnits(item) ? item.unit2Name : itemSingleUnitName(item); }
+function itemBaseUnitLabel(item){ return itemHasUnits(item) ? ul(item.unit2Name) : itemSingleUnitName(item); }
 // Case/whitespace-insensitive name match, used to warn about duplicate item names.
 function findItemByName(name, excludeId){
   const norm = (name||'').trim().toLowerCase();
@@ -4761,9 +4775,9 @@ function fmtQty(item, qtyBase){
   const u1 = Math.floor((qtyBase+1e-9)/ratio);
   let rem = Math.round((qtyBase - u1*ratio)*100)/100;
   if(rem<0) rem=0;
-  if(u1>0 && rem>0) return `${plainQty(u1)} ${item.unit1Name} ${t('andWord')} ${plainQty(rem)} ${item.unit2Name}`;
-  if(u1>0) return `${plainQty(u1)} ${item.unit1Name}`;
-  return `${plainQty(rem)} ${item.unit2Name}`;
+  if(u1>0 && rem>0) return `${plainQty(u1)} ${ulp(item.unit1Name,u1)} ${t('andWord')} ${plainQty(rem)} ${ulp(item.unit2Name,rem)}`;
+  if(u1>0) return `${plainQty(u1)} ${ulp(item.unit1Name,u1)}`;
+  return `${plainQty(rem)} ${ulp(item.unit2Name,rem)}`;
 }
 // An item's grand total at zero is shown as "out of stock" rather than the bare number "0" —
 // a lone "0" is easy to misread as other digits at a glance, and "out of stock" is unambiguous.
@@ -4778,11 +4792,11 @@ function toBaseQty(item, enteredQty, unitChoice){
 // Populates a unit <select> for an item: hidden/single option when the item has no units, otherwise u2 (default) + u1.
 function unitSelectHtml(item, selected){
   if(!itemHasUnits(item)) return `<option value="u2">${itemSingleUnitName(item) || t('colQty')}</option>`;
-  return `<option value="u2" ${selected==='u1'?'':'selected'}>${item.unit2Name}</option><option value="u1" ${selected==='u1'?'selected':''}>${item.unit1Name}</option>`;
+  return `<option value="u2" ${selected==='u1'?'':'selected'}>${ul(item.unit2Name)}</option><option value="u1" ${selected==='u1'?'selected':''}>${ul(item.unit1Name)}</option>`;
 }
 function qtyUnitLabel(item, unitChoice){
   if(!itemHasUnits(item)) return itemSingleUnitName(item) || '';
-  return unitChoice==='u1' ? item.unit1Name : item.unit2Name;
+  return unitChoice==='u1' ? ul(item.unit1Name) : ul(item.unit2Name);
 }
 // Refreshes a form's unit <select> (and its wrapper's visibility) for the currently chosen item.
 function refreshUnitSelect(selectId, wrapId, item){
@@ -4826,7 +4840,7 @@ function refreshQtyExtraField(prefix, item, unitChoice){
     if(inputEl) inputEl.value = '';
   } else {
     const inputEl = document.getElementById(cfg.extraInput);
-    if(inputEl) inputEl.placeholder = '0 '+item.unit2Name;
+    if(inputEl) inputEl.placeholder = '0 '+ul(item.unit2Name);
   }
 }
 function updateQtyAvailableHint(prefix){
@@ -5748,7 +5762,7 @@ function rowBaseQty(item, row){
 // already added, not just at entry time.
 function extraQtyCellHtml(updateFnName, i, item, row){
   if(!itemHasUnits(item) || row.unitChoice!=='u1') return '';
-  return `<input type="text" inputmode="decimal" lang="en" oninput="this.value=toLatinDigits(this.value)" step="0.01" value="${row.extraQty||0}" onchange="${updateFnName}(${i},'extraQty',this.value)" placeholder="+ ${item.unit2Name}" title="${t('extraPacksLabel')}" style="width:52px;border:1px solid var(--line);border-radius:6px;padding:4px 6px;font-family:inherit;font-size:12.5px;margin-inline-start:4px;"><span style="font-size:11.5px;color:var(--ink-soft);margin-inline-start:4px;">${item.unit2Name}</span>`;
+  return `<input type="text" inputmode="decimal" lang="en" oninput="this.value=toLatinDigits(this.value)" step="0.01" value="${row.extraQty||0}" onchange="${updateFnName}(${i},'extraQty',this.value)" placeholder="+ ${ul(item.unit2Name)}" title="${t('extraPacksLabel')}" style="width:52px;border:1px solid var(--line);border-radius:6px;padding:4px 6px;font-family:inherit;font-size:12.5px;margin-inline-start:4px;"><span style="font-size:11.5px;color:var(--ink-soft);margin-inline-start:4px;">${ul(item.unit2Name)}</span>`;
 }
 // For an item with a single named unit (no second tier) there's no dropdown to choose from — just
 // show that unit's name beside the quantity so it reads "8 قطعة" like the two-unit rows do.
@@ -6248,10 +6262,10 @@ function noteQtyTotalText(rows){
     if(r.unitChoice && r.enteredQty!=null){
       const item = STATE.items.find(x=>x.id===r.itemId);
       add(item ? (qtyUnitLabel(item, r.unitChoice)||'') : '', r.enteredQty);
-      if(r.extraQty>0 && item) add(item.unit2Name||'', r.extraQty);
+      if(r.extraQty>0 && item) add(ul(item.unit2Name)||'', r.extraQty);
     } else add('', r.qty);
   });
-  return [...totals].map(([label,q])=> label ? `${plainQty(q)} ${label}` : plainQty(q)).join(' + ');
+  return [...totals].map(([label,q])=> label ? `${plainQty(q)} ${(typeof LANG!=='undefined'&&LANG==='en'&&Number(q)!==1&&UNIT_PLURAL_EN[label])||label}` : plainQty(q)).join(' + ');
 }
 // Last row of a note table: "إجمالي الكمية" label spanning the first `labelCols` columns, then the total spanning
 // the remaining `valueCols` (so it starts right under the quantity column). Empty tables get no total row.
@@ -6284,7 +6298,7 @@ function rowQtyDisplay(r){
     const item = STATE.items.find(x=>x.id===r.itemId);
     const label = item ? qtyUnitLabel(item, r.unitChoice) : '';
     const mainPart = label ? `${plainQty(r.enteredQty)} ${label}` : plainQty(r.enteredQty);
-    if(r.extraQty>0 && item) return `${mainPart} ${t('andWord')} ${plainQty(r.extraQty)} ${item.unit2Name}`;
+    if(r.extraQty>0 && item) return `${mainPart} ${t('andWord')} ${plainQty(r.extraQty)} ${ulp(item.unit2Name,r.extraQty)}`;
     return mainPart;
   }
   return plainQty(r.qty);
