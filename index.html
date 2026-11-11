@@ -4583,7 +4583,7 @@ function buildItemsSheet(){
     t('xlColTotalBase'), t('xlColFullBig'), t('xlColRemSmall'), t('xlColStatus')];
   const rows = orderedItems(STATE.items).map(it=>{
     const hu = itemHasUnits(it), total = itemTotal(it), sp = xlSplit(it, total), lvl = effectiveReorderLevel(it);
-    const st = total<=0 ? t('xlStatusOut') : (total<=lvl ? t('xlStatusLow') : t('xlStatusOk'));
+    const st = total<=0 ? t('xlStatusOut') : ((hu ? total/it.unitRatio : total)<=lvl ? t('xlStatusLow') : t('xlStatusOk'));
     return [it.name, hu?ul(it.unit1Name):'', hu?ul(it.unit2Name):(itemSingleUnitName(it)||''), hu?it.unitRatio:'', lvl, it.unitWeight>0?it.unitWeight:'',
       ...whs.map(w=>xlWhBalance(it,w)), total, sp.big, sp.small, st];
   });
