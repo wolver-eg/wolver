@@ -648,7 +648,7 @@
     <h2 data-i18n="addNewItemHeading">إضافة صنف جديد</h2>
     <div class="form-grid">
       <div class="full"><label data-i18n="itemNameLabel">اسم الصنف</label><input id="niName" data-i18n-placeholder="itemNameExamplePlaceholder" placeholder="مثال: WOLVER ..."></div>
-      <div class="full"><label data-i18n="reorderLevelOptionalLabel">حد الطلب (اختياري)</label><input id="niReorderLevel" type="text" inputmode="decimal" lang="en" oninput="this.value=toLatinDigits(this.value)" step="0.01" min="0" data-i18n-placeholder="reorderLevelExamplePlaceholder" placeholder="مثال: 20 — سيبه فاضي لو عايز الحد الافتراضي (20)"></div>
+      <div class="full"><label data-i18n="reorderLevelOptionalLabel">حد الطلب (اختياري — بالوحدة الكبرى)</label><input id="niReorderLevel" type="text" inputmode="decimal" lang="en" oninput="this.value=toLatinDigits(this.value)" step="0.01" min="0" data-i18n-placeholder="reorderLevelExamplePlaceholder" placeholder="مثال: 20 — سيبه فاضي لو عايز الحد الافتراضي (20)"></div>
       <div class="section-head" style="margin-top:4px;margin-bottom:0;"><h2 style="font-size:13px;" data-i18n="unitsSectionHeading">وحدات القياس (اختياري)</h2></div>
       <div class="full item-meta" data-i18n="unitsSectionDesc" style="margin-top:0;">لو التعبئة دي بتتقسم لوحدات (مثلاً كرتونة فيها عبوات، أو كيس فيه قطع)، حدد اسم كل وحدة وعدد الوحدة الثانية داخل الأولى. تقدر بعد كده تدخل الكمية بأي وحدة من الاتنين.</div>
       <div><label data-i18n="unit1NameLabel">اسم الوحدة الأولى (الكبرى)</label><input id="niUnit1Name" data-i18n-placeholder="unit1Placeholder" placeholder="مثال: كرتونة"></div>
@@ -678,7 +678,7 @@
     <h2 data-i18n="editItemHeading">تعديل الصنف</h2>
     <div class="form-grid">
       <div class="full"><label data-i18n="itemNameLabel">اسم الصنف</label><input id="editItemName"></div>
-      <div class="full"><label data-i18n="reorderLevelOptionalLabel">حد الطلب (اختياري)</label><input id="editItemReorderLevel" type="text" inputmode="decimal" lang="en" oninput="this.value=toLatinDigits(this.value)" step="0.01" min="0" data-i18n-placeholder="reorderLevelDefaultPlaceholder" placeholder="سيبه فاضي لو عايز الحد الافتراضي (20)"></div>
+      <div class="full"><label data-i18n="reorderLevelOptionalLabel">حد الطلب (اختياري — بالوحدة الكبرى)</label><input id="editItemReorderLevel" type="text" inputmode="decimal" lang="en" oninput="this.value=toLatinDigits(this.value)" step="0.01" min="0" data-i18n-placeholder="reorderLevelDefaultPlaceholder" placeholder="سيبه فاضي لو عايز الحد الافتراضي (20)"></div>
       <div class="section-head" style="margin-top:4px;margin-bottom:0;"><h2 style="font-size:13px;" data-i18n="unitsSectionHeading">وحدات القياس (اختياري)</h2></div>
       <div class="full item-meta" data-i18n="unitsSectionDesc" style="margin-top:0;">لو التعبئة دي بتتقسم لوحدات (مثلاً كرتونة فيها عبوات، أو كيس فيه قطع)، حدد اسم كل وحدة وعدد الوحدة الثانية داخل الأولى. تقدر بعد كده تدخل الكمية بأي وحدة من الاتنين.</div>
       <div><label data-i18n="unit1NameLabel">اسم الوحدة الأولى (الكبرى)</label><input id="editItemUnit1Name" data-i18n-placeholder="unit1Placeholder" placeholder="مثال: كرتونة"></div>
@@ -713,7 +713,7 @@
   <div class="modal wide">
     <button class="modal-close" onclick="closeReorderReport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;display:block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     <h2 style="display:flex;align-items:center;gap:7px;"><svg class="btn-ico" style="width:18px;height:18px;margin:0;flex:none;color:var(--brand);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg><span data-i18n="lowStockItemsHeading">أصناف وصلت لحد الطلب</span></h2>
-    <div class="item-meta" data-i18n="lowStockReportDesc">الأصناف اللي رصيدها الحالي (كل المخازن) وصل لحد الطلب المحدد لها، أو نزل لـ 20 أو أقل، أو نفد تمامًا — في حالة عدم تحديد حد طلب مخصص للصنف.</div>
+    <div class="item-meta" data-i18n="lowStockReportDesc">الأصناف اللي رصيدها الحالي (كل المخازن) وصل لحد الطلب المحدد لها، أو نزل لـ 20 أو أقل، أو نفد تمامًا — في حالة عدم تحديد حد طلب مخصص للصنف. الحساب بالوحدة الكبرى (مثل الكرتونة) للأصناف اللي ليها وحدتين.</div>
     <div class="table-scroll">
       <table class="log-table">
         <thead><tr><th data-i18n="colNo">م</th><th data-i18n="colItemName">اسم الصنف</th><th data-i18n="colCurrentBalance">الرصيد الحالي</th><th data-i18n="reorderLevel">حد الطلب</th><th data-i18n="colStatus">الحالة</th></tr></thead>
@@ -1705,7 +1705,7 @@ const I18N = {
     addNewItemHeading: `إضافة صنف جديد`,
     itemNameLabel: `اسم الصنف`,
     itemNameExamplePlaceholder: `مثال: WOLVER ...`,
-    reorderLevelOptionalLabel: `حد الطلب (اختياري)`,
+    reorderLevelOptionalLabel: `حد الطلب (اختياري — بالوحدة الكبرى)`,
     reorderLevelExamplePlaceholder: `مثال: 20 — سيبه فاضي لو عايز الحد الافتراضي (20)`,
     reorderLevelDefaultPlaceholder: `سيبه فاضي لو عايز الحد الافتراضي (20)`,
     itemImageOptionalLabel: `صورة الصنف (اختياري)`,
@@ -1782,7 +1782,7 @@ const I18N = {
     confirmItemExistsSuffix: `" موجود بالفعل في القائمة. عايز تضيفه تاني برضه؟`,
     saveChangesBtn: `حفظ التعديلات`,
     lowStockItemsHeading: `أصناف وصلت لحد الطلب`,
-    lowStockReportDesc: `الأصناف اللي رصيدها الحالي (كل المخازن) وصل لحد الطلب المحدد لها، أو نزل لـ 20 أو أقل، أو نفد تمامًا — في حالة عدم تحديد حد طلب مخصص للصنف.`,
+    lowStockReportDesc: `الأصناف اللي رصيدها الحالي (كل المخازن) وصل لحد الطلب المحدد لها، أو نزل لـ 20 أو أقل، أو نفد تمامًا — في حالة عدم تحديد حد طلب مخصص للصنف. الحساب بالوحدة الكبرى (مثل الكرتونة) للأصناف اللي ليها وحدتين.`,
     reorderLevel: `حد الطلب`,
     close: `إغلاق`,
     pendingApprovalsTitle: `الأذونات المعلّقة — بانتظار المراجعة`,
@@ -2259,7 +2259,7 @@ const I18N = {
     addNewItemHeading: `Add New Item`,
     itemNameLabel: `Item Name`,
     itemNameExamplePlaceholder: `e.g. WOLVER ...`,
-    reorderLevelOptionalLabel: `Reorder Level (optional)`,
+    reorderLevelOptionalLabel: `Reorder Level (optional — in the larger unit)`,
     reorderLevelExamplePlaceholder: `e.g. 20 — leave empty for the default (20)`,
     reorderLevelDefaultPlaceholder: `Leave empty for the default (20)`,
     itemImageOptionalLabel: `Item Image (optional)`,
@@ -2336,7 +2336,7 @@ const I18N = {
     confirmItemExistsSuffix: `" already exists. Add it again anyway?`,
     saveChangesBtn: `Save Changes`,
     lowStockItemsHeading: `Items at Reorder Level`,
-    lowStockReportDesc: `Items whose current balance (all warehouses) has reached their reorder level, or dropped to 20 or less, or run out entirely — when no custom reorder level is set.`,
+    lowStockReportDesc: `Items whose current balance (all warehouses) has reached their reorder level, or dropped to 20 or less, or run out entirely — when no custom reorder level is set. Measured in the larger unit (e.g. cartons) for items that have two units.`,
     reorderLevel: `Reorder Level`,
     close: `Close`,
     pendingApprovalsTitle: `Pending Approvals — awaiting review`,
@@ -4869,9 +4869,11 @@ function hasCustomReorderLevel(item){ return typeof item.reorderLevel==='number'
 function effectiveReorderLevel(item){ return hasCustomReorderLevel(item) ? item.reorderLevel : DEFAULT_REORDER_LEVEL; }
 function getLowStockItems(){
   return STATE.items
-    .map(item=>({ item, total:itemTotal(item), threshold:effectiveReorderLevel(item), custom:hasCustomReorderLevel(item) }))
-    .filter(r=>r.total<=r.threshold)
-    .sort((a,b)=>a.total-b.total);
+    .map(item=>{ const total=itemTotal(item); const main = itemHasUnits(item) ? total/item.unitRatio : total;
+      return { item, total, main, threshold:effectiveReorderLevel(item), custom:hasCustomReorderLevel(item) }; })
+    // The reorder level is measured in the item's larger unit (e.g. cartons) when it has units, else in its single unit.
+    .filter(r=>r.main<=r.threshold+1e-9)
+    .sort((a,b)=>a.main-b.main);
 }
 function canViewReorderReport(user){ return !!(user && (user.role==='admin' || user.canViewReorderReport)); }
 function updateReorderBadge(){
@@ -4896,7 +4898,7 @@ function renderReorderReportBody(){
   body.innerHTML = rows.map((r,i)=>{
     const statusText = r.total<=0 ? t('statusOutOfStock') : t('statusAtReorderLevel');
     const statusClass = r.total<=0 ? 'danger' : 'warn';
-    const thresholdText = r.threshold.toLocaleString(appLocale(),{maximumFractionDigits:2}) + (r.custom ? '' : ' '+t('defaultParenthetical'));
+    const thresholdText = r.threshold.toLocaleString(appLocale(),{maximumFractionDigits:2}) + (itemHasUnits(r.item) ? ' '+ulp(r.item.unit1Name,r.threshold) : '') + (r.custom ? '' : ' '+t('defaultParenthetical'));
     return `<tr onclick="closeReorderReport();openItemModal('${r.item.id}')" style="cursor:pointer;">
       <td>${i+1}</td><td>${r.item.name}</td>
       <td>${totalQtyDisplay(r.item, r.total)}</td>
@@ -4910,7 +4912,7 @@ function buildReorderReportPrintHtml(){
   const head = `<tr><th>${t('colNo')}</th><th>${t('colItemName')}</th><th>${t('colCurrentBalance')}</th><th>${t('reorderLevel')}</th><th>${t('colStatus')}</th></tr>`;
   const body = rows.map((r,i)=>{
     const statusText = r.total<=0 ? t('statusOutOfStock') : t('statusAtReorderLevel');
-    const thresholdText = r.threshold + (r.custom ? '' : ' '+t('defaultParenthetical'));
+    const thresholdText = r.threshold + (itemHasUnits(r.item) ? ' '+ulp(r.item.unit1Name,r.threshold) : '') + (r.custom ? '' : ' '+t('defaultParenthetical'));
     return `<tr><td>${i+1}</td><td>${r.item.name}</td><td>${totalQtyDisplay(r.item, r.total)}</td><td>${thresholdText}</td><td>${statusText}</td></tr>`;
   }).join('') || `<tr><td colspan="5">${t('noLowStockItemsPrint')}</td></tr>`;
   return `<h2>${t('lowStockReportPrintTitle')}</h2><br><table class="note-table">${head}${body}</table>`;
